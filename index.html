@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MainPage</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <script src="/js/constants.js"></script>
+    <script src="/js/functions.js"></script>
+    <script src="/js/draw.js"></script>
+</head>
+<body onload="start()">
+    <div id="canvas-container">
+
+    </div>
+    <button onclick="testUpdateCellType()">Switch Cell Type</button>
+    <button onclick="spawnNewCell()">Spawn New Cell</button>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+<script>
+    // Override keycodes
+    document.body.addEventListener('keydown', (event) => {
+        // keyCode 49 corresponds to the "s" key, meta corresponds to ⌘
+        if((event.keyCode==83 && event.metaKey) || (event.keyCode==83 && event.ctrlKey)) {
+            event.preventDefault();
+            console.log('Default action prevented');
+        }
+    });
+</script>
+</html>
