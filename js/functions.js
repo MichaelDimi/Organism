@@ -18,9 +18,10 @@ function spawnNewCell() {
 
             let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
             organism.push(childCell);
+
             setTimeout(() => {
                 childCell.setType(CellTypes.dead);
-              }, CELL_TIMEOUT);
+            }, CELL_TIMEOUT);
             break;
         } else {
             console.log("Not Valid Direction");
