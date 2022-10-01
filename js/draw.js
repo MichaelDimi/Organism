@@ -18,6 +18,8 @@ const CellTypes = {
     dead: "Dead" 
 }
 
+
+
 // where a new cell will be placed relative to parent
 const Direction = {
     above: { x: 0, y: -1, name: "above" },
@@ -26,6 +28,11 @@ const Direction = {
     right: { x: 1, y: 0, name: "right" }
 }
 
+// function killCell(x){
+//     let cell=x;
+//     cell.type="Dead";
+//     cell.drawCell();
+// }
 class cell {
     constructor(scaledX, scaledY, width, height, type, direction) {
         this.scaledX = scaledX;
@@ -38,8 +45,9 @@ class cell {
         this.direction = direction;
 
         this.drawCell(this.type);
+        
     }
-
+    
     drawCell() {
         ctx.lineWidth = CELL_STROKE;
         switch (this.type) {
@@ -107,6 +115,7 @@ class cell {
     }
 }
 
+//array of cells
 var organism = [];
 
 let cameraOffset = { 
@@ -146,6 +155,8 @@ function draw() {
     for (let i = 0; i < organism.length; i++) { // draw all cells in organism
         organism[i].drawCell();
     }
+
+    
 
     requestAnimationFrame( draw );
 }

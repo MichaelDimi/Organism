@@ -4,23 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MainPage</title>
+    <title>Organism</title>
     <link rel="stylesheet" href="/css/main.css">
     <script src="/js/constants.js"></script>
     <script src="/js/functions.js"></script>
     <script src="/js/draw.js"></script>
+    <script src="/js/tests.js"></script>
 </head>
 <body onload="start()">
     <div id="canvas-container">
 
     </div>
-    <button onclick="testUpdateCellType()">Switch Cell Type</button>
+    <button onclick="testSetType()">Switch Cell Type</button>
     <button onclick="spawnNewCell()">Spawn New Cell</button>
     <button onclick="testChangeDirection()">Change Direction</button>
     <script src="/js/tests/tests.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 <script>
+    
     // Override keycodes
     document.body.addEventListener('keydown', (event) => {
         // keyCode 49 corresponds to the "s" key, meta corresponds to ⌘
