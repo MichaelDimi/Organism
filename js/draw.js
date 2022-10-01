@@ -34,7 +34,7 @@ const Direction = {
 //     cell.drawCell();
 // }
 class cell {
-    constructor(scaledX, scaledY, width, height, type) {
+    constructor(scaledX, scaledY, width, height, type, direction) {
         this.scaledX = scaledX;
         this.scaledY = scaledY;
         this.x = this.scaledX * 30 - CELL_SIZE / 2;
@@ -42,13 +42,12 @@ class cell {
         this.width = width;
         this.height = height;
         this.type = type;
-        this.time = 0;
+        this.direction = direction;
+
         this.drawCell(this.type);
         
     }
     
-    
-
     drawCell() {
         ctx.lineWidth = CELL_STROKE;
         switch (this.type) {
@@ -56,15 +55,7 @@ class cell {
                 ctx.strokeStyle = DEFAULT_COLOR;
                 break;
             case CellTypes.bud:
-                ctx.stokeWidth = 2;    
-                ctx.strokeStyle = DEFAULT_COLOR;
-                ctx.lineCap = "round";
-
-                ctx.beginPath();
-                ctx.moveTo(this.x + 8, this.y + CELL_SIZE/2-1);
-                ctx.lineTo(this.x + CELL_SIZE/2, this.y + CELL_SIZE/2 + 3);
-                ctx.lineTo(this.x + CELL_SIZE - 8, this.y + CELL_SIZE/2-1);
-                ctx.stroke();
+                this.drawArrow();
 
                 ctx.lineWidth = CELL_STROKE;
                 ctx.strokeStyle = GREEN;
@@ -76,8 +67,51 @@ class cell {
         ctx.roundedRect(this.x, this.y, this.width, this.height, 8).stroke();
     }
 
+    drawArrow() {
+        ctx.stokeWidth = 2;    
+        ctx.strokeStyle = DEFAULT_COLOR;
+        ctx.lineCap = "round";
+
+        let d = this.direction;
+
+        switch (d) {
+            case Direction.below:
+                ctx.beginPath();
+                ctx.moveTo(this.x + 8            , this.y + CELL_SIZE/2 - 1);
+                ctx.lineTo(this.x + CELL_SIZE / 2, this.y + CELL_SIZE/2 + 3); // arrow tip
+                ctx.lineTo(this.x + CELL_SIZE - 8, this.y + CELL_SIZE/2 - 1);
+                ctx.stroke();
+                break;
+            case Direction.above:
+                ctx.beginPath();
+                ctx.moveTo(this.x + 8            , this.y + CELL_SIZE/2 + 1);
+                ctx.lineTo(this.x + CELL_SIZE / 2, this.y + CELL_SIZE/2 - 3); // arrow tip
+                ctx.lineTo(this.x + CELL_SIZE - 8, this.y + CELL_SIZE/2 + 1);
+                ctx.stroke();
+                break;
+            case Direction.left:
+                ctx.beginPath();
+                ctx.moveTo(this.x + CELL_SIZE/2 + 1, this.y + 8            );
+                ctx.lineTo(this.x + CELL_SIZE/2 - 3, this.y + CELL_SIZE / 2); // arrow tip
+                ctx.lineTo(this.x + CELL_SIZE/2 + 1, this.y + CELL_SIZE - 8);
+                ctx.stroke();
+                break;
+            case Direction.right:
+                ctx.beginPath();
+                ctx.moveTo(this.x + CELL_SIZE/2 - 1, this.y + 8            );
+                ctx.lineTo(this.x + CELL_SIZE/2 + 3, this.y + CELL_SIZE / 2); // arrow tip
+                ctx.lineTo(this.x + CELL_SIZE/2 - 1, this.y + CELL_SIZE - 8);
+                ctx.stroke();
+                break;
+        }
+    }
+
     setType(newType) {
         this.type = newType
+    }
+
+    setDirection(newDirection) {
+        this.direction = newDirection
     }
 }
 
@@ -88,7 +122,7 @@ let cameraOffset = {
     x: 0, 
     y: 0 
 }
-let cameraZoom = 1
+let cameraZoom = 4
 let viewCenter;
 
 function start() {
@@ -97,8 +131,7 @@ function start() {
     center = { x: SCALED_X/2, y: SCALED_Y/2 };
     ctx = gameBoard.context;
 
-    let startTile = new cell(center.x, center.y, CELL_SIZE, CELL_SIZE, CellTypes.default);
-    
+    let startTile = new cell(center.x, center.y, CELL_SIZE, CELL_SIZE, CellTypes.default, Direction.down);
     organism.push(startTile);
 
     draw();

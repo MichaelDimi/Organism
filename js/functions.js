@@ -16,7 +16,7 @@ function spawnNewCell() {
             // console.log(directions[i]);
             dir = directions[i];
 
-            let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud);
+            let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
             organism.push(childCell);
             setTimeout(() => {
                 childCell.setType(CellTypes.dead);
