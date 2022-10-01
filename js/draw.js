@@ -18,8 +18,6 @@ const CellTypes = {
     dead: "Dead" 
 }
 
-
-
 // where a new cell will be placed relative to parent
 const Direction = {
     above: { x: 0, y: -1, name: "above" },
@@ -28,11 +26,6 @@ const Direction = {
     right: { x: 1, y: 0, name: "right" }
 }
 
-// function killCell(x){
-//     let cell=x;
-//     cell.type="Dead";
-//     cell.drawCell();
-// }
 class cell {
     constructor(scaledX, scaledY, width, height, type) {
         this.scaledX = scaledX;
@@ -42,12 +35,9 @@ class cell {
         this.width = width;
         this.height = height;
         this.type = type;
-        this.time = 0;
+
         this.drawCell(this.type);
-        
     }
-    
-    
 
     drawCell() {
         ctx.lineWidth = CELL_STROKE;
@@ -81,7 +71,6 @@ class cell {
     }
 }
 
-//array of cells
 var organism = [];
 
 let cameraOffset = { 
@@ -98,7 +87,6 @@ function start() {
     ctx = gameBoard.context;
 
     let startTile = new cell(center.x, center.y, CELL_SIZE, CELL_SIZE, CellTypes.default);
-    
     organism.push(startTile);
 
     draw();
@@ -122,8 +110,6 @@ function draw() {
     for (let i = 0; i < organism.length; i++) { // draw all cells in organism
         organism[i].drawCell();
     }
-
-    
 
     requestAnimationFrame( draw );
 }
