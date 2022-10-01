@@ -12,7 +12,7 @@ function spawnNewCell() {
             // console.log(directions[i]);
             dir = directions[i];
 
-            let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud);
+            let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
             organism.push(childCell);
 
             break;
@@ -53,11 +53,6 @@ function checkDirection(organism, parent, dir) {
     }
 
     return true
-}
-
-function testUpdateCellType() {
-    organism[0].updateCellType(CellTypes.bud);
-    console.log("NEW: ", organism[0]);
 }
 
 // Returns random int from 0 (inclusive) -> max (exlusive)
