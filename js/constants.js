@@ -1,7 +1,6 @@
-// let CANVAS_SIZE = 100*30;
-let CANVAS_W = 100*30;
-let CANVAS_H = 120*30;
-let SCALED_X = CANVAS_W / 30;
+let CANVAS_W = 130*30;
+let CANVAS_H = 100*30;
+let SCALED_X = CANVAS_W / 30; // 100 scaled x-positions * 120 scaled y-positions
 let SCALED_Y = CANVAS_H / 30;
 
 let MAX_ZOOM = 5

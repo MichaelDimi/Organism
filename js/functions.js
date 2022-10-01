@@ -1,11 +1,14 @@
 function spawnNewCell() {
+    // Get a shuffled array of directions to check - so it doesn't always check starting at the same direction
     let directions = getRandomDirections();
 
+    // Get a random Parent cell
     let cellIndex = randomInt(organism.length);
     let parentCell = organism[cellIndex];
 
     let dir;
 
+    // Check each direction that there is not cell there, and break once a valid direction is found
     for (let i = 0; i < directions.length; i++) {
         let isValid = checkDirection(organism, parentCell, directions[i]);
         if (isValid) { 
@@ -53,11 +56,6 @@ function checkDirection(organism, parent, dir) {
     }
 
     return true
-}
-
-function testUpdateCellType() {
-    organism[0].updateCellType(CellTypes.bud);
-    console.log("NEW: ", organism[0]);
 }
 
 // Returns random int from 0 (inclusive) -> max (exlusive)

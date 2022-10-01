@@ -66,9 +66,8 @@ class cell {
         ctx.roundedRect(this.x, this.y, this.width, this.height, 8).stroke();
     }
 
-    updateCellType(newType) {
+    setType(newType) {
         this.type = newType
-        this.drawCell();
     }
 }
 
