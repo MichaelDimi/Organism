@@ -3,6 +3,7 @@ let ctx;
 
 let cameraOffset = { x: 0, y: 0 }
 let cameraZoom = 1
+
 let viewCenter;
 
 // array of cells

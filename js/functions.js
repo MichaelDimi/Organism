@@ -33,10 +33,11 @@ function spawnNewBud() {
             console.log("Not Valid Direction");
         }
     }
-
+    
     // If it checks all directions and does not return the function, set the parent cell to be invalid
     // Removes it from being checked in the future
     parentCell.isPossibleParent = false;
+
 }
 
 function getRandomDirections() {
