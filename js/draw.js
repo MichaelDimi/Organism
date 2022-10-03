@@ -40,83 +40,14 @@ function draw() {
 
     // MARK: Do all rendering here // only render things that are bounded by the rendering box
     for (let i = 0; i < organism.cells.length; i++) { // draw all cells in organism
-        organism.cells[i].drawCell();
+        if (organism.cells[i] === organism.selected) {
+            organism.cells[i].drawCell(CELL_SELECT_COLOR);
+        } else {
+            organism.cells[i].drawCell(GREEN);
+        }
     }
 
     requestAnimationFrame( draw );
-}
-
-// Get the relevent x and y positions of mouse or single touch event
-function getEventLocation(e) {
-    if (e.touches && e.touches.length == 1) { // checks for touch screen and only 1 finger
-        return { x: e.touches[0].clientX, y: e.touches[0].clientY }
-    } else if (e.clientX && e.clientY) { // checks for x and y position of mouse
-        return { x: e.clientX, y: e.clientY }
-    }
-}
-
-// MARK: Listener functions
-let isDragging = false;
-let isMouseDown = false;
-let dragStart = { x: 0, y: 0 }
-let initialPinchDistance = null
-let lastZoom = cameraZoom
-
-function onPointerDown(e) {
-    isDragging = false;
-    isMouseDown = true;
-    dragStart.x = getEventLocation(e).x / cameraZoom - cameraOffset.x;
-    dragStart.y = getEventLocation(e).y / cameraZoom - cameraOffset.y;
-}
-
-function onPointerUp(e) {
-    isMouseDown = false;
-
-    if (!isDragging) {
-        // Register click
-        let click = getEventLocation(e);
-        let canvasWindow = { w: document.getElementById("canvas-container").offsetWidth, h: document.getElementById("canvas-container").offsetHeight }
-        console.log(canvasWindow)
-        console.log(click)
-        let scaledClickX = click.x - canvasWindow.w;
-        console.log(scaledClickX);
-    }
-
-    isDragging = false;
-    // Reset these to defaults: 
-    initialPinchDistance = null;
-    lastZoom = cameraZoom
-}
-
-function onPointerMove(e){
-    if (isMouseDown) {
-        isDragging = true;
-        cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x
-        cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y
-
-        console.log(cameraOffset.x);
-    }
-}
-
-function adjustZoom(zoomAmount, zoomFactor) {
-    if (!isDragging) {
-        if (zoomAmount) {
-            cameraZoom += zoomAmount
-        } else if (zoomFactor) {
-            // TODO
-        }
-
-        // Bound the zooming
-        cameraZoom = Math.min( cameraZoom, MAX_ZOOM );
-        cameraZoom = Math.max( cameraZoom, MIN_ZOOM );
-    }
-}
-
-function onClick(e) {
-    if (isDragging) {
-        let click = getEventLocation(e);
-        console.log(click);
-    }
 }
 
 // Helper draw Fncitons

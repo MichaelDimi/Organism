@@ -12,6 +12,7 @@
     <script src="/js/entities.js"></script>
     <script src="/js/functions.js"></script>
     <script src="/js/draw.js"></script>
+    <script src="/js/events.js"></script>
     <script>
         // Mouse event listeners
         canvas.addEventListener("mousedown", onPointerDown);
@@ -26,7 +27,7 @@
 
     </div>
     <button onclick="testSetType()">Switch Cell Type</button>
-    <button onclick="spawnNewCell()">Spawn New Cell</button>
+    <button onclick="spawnNewBud()">Spawn New Bud</button>
     <button onclick="testChangeDirection()">Change Direction</button>
     <script src="/js/tests/tests.js"></script>
 </body>
@@ -37,6 +38,10 @@
         if((event.keyCode==83 && event.metaKey) || (event.keyCode==83 && event.ctrlKey)) {
             event.preventDefault();
             console.log('Default action prevented');
+        }
+
+        if (event.keyCode == 49) {
+            cameraZoom = 1;
         }
     });
 </script>

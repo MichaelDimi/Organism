@@ -44,7 +44,7 @@ class cell {
         this.direction = newDirection
     }
     
-    drawCell() {
+    drawCell(color) {
         ctx.lineWidth = CELL_STROKE;
         switch (this.type) {
             case CellTypes.default:
@@ -54,7 +54,7 @@ class cell {
                 this.drawArrow();
 
                 ctx.lineWidth = CELL_STROKE;
-                ctx.strokeStyle = GREEN;
+                ctx.strokeStyle = color;
                 break;
             case CellTypes.dead:
                 ctx.strokeStyle = RED;
@@ -107,6 +107,7 @@ class Organism {
     constructor() {
         this.cells = [];
         this.energy = 100.0;
+        this.selected;
     }
 
     getDefaultCells() {
@@ -151,5 +152,16 @@ class Organism {
         }
 
         return possibleParents;
+    }
+
+    getSelectedCell(scaledX, scaledY) {
+        for (const cell of this.cells) {
+            if (cell.scaledX == scaledX && cell.scaledY == scaledY) {
+                // set the cell to be selected
+                this.selected = cell;
+            } else {
+                // if the cell was not selected but the cells selected variable is true, set it to false
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-function spawnNewCell() {
+function spawnNewBud() {
     // Get a shuffled array of directions to check - so it doesn't always check starting at the same direction
     let directions = getRandomDirections();
 

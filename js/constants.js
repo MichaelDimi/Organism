@@ -11,11 +11,13 @@ let CELL_SIZE = 27;
 let CELL_STROKE = 5;
 let CELL_TIMEOUT = 5000.0;
 
-let BACKGROUND_COLOR = "#EDE5E1";
+// let BACKGROUND_COLOR = "#EDE5E1";
+let BACKGROUND_COLOR = "#FFF";
 let DEFAULT_COLOR = "#071D29";
 let GREEN = "#018535";
 let RED = "#9E0039";
 let ORANGE = "#D24A3B";
+let CELL_SELECT_COLOR = "#0885CB";
 
 const CellTypes = {
     default: "Default",
@@ -23,7 +25,7 @@ const CellTypes = {
     dead: "Dead" 
 }
 
-// where a new cell will be placed relative to parent
+// Where a new cell will be placed relative to parent
 const Direction = {
     above: { x: 0, y: -1, name: "above" },
     below: { x: 0, y: 1, name: "below" },
