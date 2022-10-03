@@ -1,34 +1,43 @@
-function spawnNewCell() {
+function spawnNewBud() {
     // Get a shuffled array of directions to check - so it doesn't always check starting at the same direction
     let directions = getRandomDirections();
 
-    // Get a random Parent cell
-    let cellIndex = randomInt(organism.length);
-    let parentCell = organism[cellIndex];
+    // Get a random (possible) parent cell that
+    let possibleParentCells = organism.getPossibleParents();
+    if (possibleParentCells.length < 1) {
+        console.log("No valid parents");
+        return;
+    }
+
+    let cellIndex = randomInt(possibleParentCells.length);
+    let parentCell = possibleParentCells[cellIndex]; 
 
     let dir;
 
     // Check each direction that there is not cell there, and break once a valid direction is found
     for (let i = 0; i < directions.length; i++) {
-        let isValid = checkDirection(organism, parentCell, directions[i]);
+        let isValid = checkDirection(organism.cells, parentCell, directions[i]);
         if (isValid) { 
-            // console.log(directions[i]);
             dir = directions[i];
 
             let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
-            organism.push(childCell);
+            organism.cells.push(childCell);
 
             setTimeout(() => {
                 childCell.setType(CellTypes.dead);
             }, CELL_TIMEOUT);
-            break;
+
+            return;
         } else {
+            // Remove from possible parents
             console.log("Not Valid Direction");
         }
-        
     }
-    console.log(organism.length);
     
+    // If it checks all directions and does not return the function, set the parent cell to be invalid
+    // Removes it from being checked in the future
+    parentCell.isPossibleParent = false;
+
 }
 
 function getRandomDirections() {
@@ -42,26 +51,17 @@ function getRandomDirections() {
         possibleDirections[rand] = temp;
     }
 
-    // return the first shuffled directions
+    // return the shuffled directions
     return possibleDirections;
 }
 
-// TODO: make as a function of organism
-function checkDirection(organism, parent, dir) {
-    // loop through organism to check if there is a cell in that direction
-    for (let i = 0; i < organism.length; i++) {
-        // console.log(parent);
-        // console.log(organism[i]);
-        // if (parent == organism[i]) continue;
-        if (parent.scaledX + dir.x == organism[i].scaledX && parent.scaledY + dir.y == organism[i].scaledY) {
+function checkDirection(cells, parent, dir) {
+    // loop through cells to check if there is a cell in that direction
+    for (let i = 0; i < cells.length; i++) {
+        if (parent.scaledX + dir.x == cells[i].scaledX && parent.scaledY + dir.y == cells[i].scaledY) {
             return false;
         }
     }
 
     return true
-}
-
-// Returns random int from 0 (inclusive) -> max (exlusive)
-function randomInt(max) {
-    return Math.floor(Math.random() * max);
 }

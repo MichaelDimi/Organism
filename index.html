@@ -6,19 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Organism</title>
     <link rel="stylesheet" href="/css/main.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/constants.js"></script>
+    <script src="/js/helpers.js"></script>
+    <script src="/js/entities.js"></script>
     <script src="/js/functions.js"></script>
     <script src="/js/draw.js"></script>
+    <script src="/js/events.js"></script>
+    <script>
+        // Mouse event listeners
+        canvas.addEventListener("mousedown", onPointerDown);
+        canvas.addEventListener("mousemove", onPointerMove);
+        canvas.addEventListener("mouseup", onPointerUp);
+        // Pass the event directly, since we don't need the location
+        canvas.addEventListener("wheel", (e) => adjustZoom(e.deltaY*SCROLL_SENSITIVITY))
+    </script>
 </head>
-<body onload="start()">
+<body onload="startGame()">
     <div id="canvas-container">
 
     </div>
     <button onclick="testSetType()">Switch Cell Type</button>
-    <button onclick="spawnNewCell()">Spawn New Cell</button>
+    <button onclick="spawnNewBud()">Spawn New Bud</button>
     <button onclick="testChangeDirection()">Change Direction</button>
     <script src="/js/tests/tests.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </body>
 <script>
     // Override keycodes
@@ -27,6 +38,10 @@
         if((event.keyCode==83 && event.metaKey) || (event.keyCode==83 && event.ctrlKey)) {
             event.preventDefault();
             console.log('Default action prevented');
+        }
+
+        if (event.keyCode == 49) {
+            cameraZoom = 1;
         }
     });
 </script>
