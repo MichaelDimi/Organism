@@ -37,9 +37,7 @@ function onPointerUp(e) {
         let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
         let scaledClickX = Math.round( canvasClickX / 30 );
         let scaledClickY = Math.round( canvasClickY / 30 );
-        console.log({ x: scaledClickX, y: scaledClickY })
-        organism.getSelectedCell(scaledClickX, scaledClickY);
-
+        organism.setSelectedCell(scaledClickX, scaledClickY);
     }
 
     isDragging = false;

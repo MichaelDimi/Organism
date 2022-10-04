@@ -22,6 +22,8 @@ function startGame() {
     organism.cells.push(startCell);
     console.log(startCell);
 
+    startCell.checkNeighboringCells();
+
     draw();
 }
 
@@ -40,29 +42,32 @@ function draw() {
     // TODO: Compute rendering box
 
     // MARK: Do all rendering here // only render things that are bounded by the rendering box
+    ctx.fillStyle = DEFAULT_COLOR;
+    ctx.beginPath();
+    ctx.arc(canvas.width/2 + 0.8, canvas.height/2 + 0.8, 4, 0, 2*Math.PI);
+    ctx.fill();
+
     for (let i = 0; i < organism.cells.length; i++) { // draw all cells in organism
-        if (organism.cells[i] === organism.selected) {
-            organism.cells[i].drawCell(CELL_SELECT_COLOR);
-        } else {
-            organism.cells[i].drawCell(GREEN);
+        let cell = organism.cells[i];
+
+        cell.drawCell(GREEN);
+
+        if (cell === organism.selected) {
+            if (cell.hasNeighbors[0] == false) {
+                cell.drawArrow(0, -22, DEFAULT_COLOR_transparent, Direction.above);
+            }
+            if (cell.hasNeighbors[1] == false) {
+                cell.drawArrow(0, 22, DEFAULT_COLOR_transparent, Direction.below);
+            }
+            if (cell.hasNeighbors[2] == false) {
+                cell.drawArrow(-22, 0, DEFAULT_COLOR_transparent, Direction.left);
+            }
+            if (cell.hasNeighbors[3] == false) {
+                cell.drawArrow(22, 0, DEFAULT_COLOR_transparent, Direction.right);
+            }
         }
     }
 
     requestAnimationFrame( draw );
 }
 
-// Helper draw Fncitons
-// Render curved rectangles
-CanvasRenderingContext2D.prototype.roundedRect = function (x, y, w, h, r) {
-    // Make sure radius is not bigger than the height or width
-    if (w < 2 * r) r = w / 2;
-    if (h < 2 * r) r = h / 2;
-    this.beginPath();
-    this.moveTo(x+r, y);
-    this.arcTo(x+w, y,   x+w, y+h, r);
-    this.arcTo(x+w, y+h, x,   y+h, r);
-    this.arcTo(x,   y+h, x,   y,   r);
-    this.arcTo(x,   y,   x+w, y,   r);
-    this.closePath();
-    return this;
-}

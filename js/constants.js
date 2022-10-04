@@ -15,6 +15,7 @@ let CELL_TIMEOUT = 5000.0;
 let BACKGROUND_COLOR = "#FFF";
 
 let DEFAULT_COLOR = "#071D29";
+let DEFAULT_COLOR_transparent = "rgba(7, 29, 41, 0.30)";
 let GREEN = "#018535";
 let RED = "#9E0039";
 let ORANGE = "#D24A3B";

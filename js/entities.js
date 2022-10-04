@@ -28,6 +28,8 @@ class cell {
 
         this.x = this.scaledX * 30 - CELL_SIZE / 2;
         this.y = this.scaledY * 30 - CELL_SIZE / 2;
+
+        this.hasNeighbors = new Array(4); // Above, Below, Left, Right
     }
 
     setType(newType) {
@@ -51,7 +53,7 @@ class cell {
                 ctx.strokeStyle = DEFAULT_COLOR;
                 break;
             case CellTypes.bud:
-                this.drawArrow();
+                this.drawArrow(0, 0, DEFAULT_COLOR);
 
                 ctx.lineWidth = CELL_STROKE;
                 ctx.strokeStyle = color;
@@ -63,43 +65,58 @@ class cell {
         ctx.roundedRect(this.x + 1.6, this.y + 1.6, this.width-1.6, this.height-1.6, 8).stroke();
     }
 
-    drawArrow() {
+    drawArrow(offsetX, offsetY, color, direction) {
         ctx.stokeWidth = 1;    
-        ctx.strokeStyle = DEFAULT_COLOR;
+        ctx.strokeStyle = color;
         ctx.lineCap = "round";
 
-        let d = this.direction;
+        let d;
+        if (direction == null) {
+            d = this.direction;
+        } else {
+            d = direction;
+        }
+
+        let x = this.x + offsetX;
+        let y = this.y + offsetY;
 
         switch (d) {
             case Direction.below:
                 ctx.beginPath();
-                ctx.moveTo(this.x + 8.6                 ,this.y + CELL_SIZE/2 - 0.7);
-                ctx.lineTo(this.x + CELL_SIZE / 2 + 0.75,this.y + CELL_SIZE/2 + 3.3); 
-                ctx.lineTo(this.x + CELL_SIZE - 7       ,this.y + CELL_SIZE/2 - 0.7);
+                ctx.moveTo(x + 8.6                 , y + CELL_SIZE/2 - 0.7);
+                ctx.lineTo(x + CELL_SIZE / 2 + 0.75, y + CELL_SIZE/2 + 3.3); 
+                ctx.lineTo(x + CELL_SIZE - 7       , y + CELL_SIZE/2 - 0.7);
                 ctx.stroke();
                 break;
             case Direction.above:
                 ctx.beginPath();
-                ctx.moveTo(this.x + 8.6                 ,this.y + CELL_SIZE/2 + 2);
-                ctx.lineTo(this.x + CELL_SIZE / 2 + 0.75,this.y + CELL_SIZE/2 - 2); 
-                ctx.lineTo(this.x + CELL_SIZE - 7       ,this.y + CELL_SIZE/2 + 2);
+                ctx.moveTo(x + 8.6                 , y + CELL_SIZE/2 + 2);
+                ctx.lineTo(x + CELL_SIZE / 2 + 0.75, y + CELL_SIZE/2 - 2); 
+                ctx.lineTo(x + CELL_SIZE - 7       , y + CELL_SIZE/2 + 2);
                 ctx.stroke();
                 break;
             case Direction.left:
                 ctx.beginPath();
-                ctx.moveTo(this.x + CELL_SIZE/2 + 2,this.y + 8.6                 );
-                ctx.lineTo(this.x + CELL_SIZE/2 - 2,this.y + CELL_SIZE / 2 + 0.75);
-                ctx.lineTo(this.x + CELL_SIZE/2 + 2,this.y + CELL_SIZE - 7       );
+                ctx.moveTo(x + CELL_SIZE/2 + 2, y + 8.6                 );
+                ctx.lineTo(x + CELL_SIZE/2 - 2, y + CELL_SIZE / 2 + 0.75);
+                ctx.lineTo(x + CELL_SIZE/2 + 2, y + CELL_SIZE - 7       );
                 ctx.stroke();
                 break;
             case Direction.right:
                 ctx.beginPath();
-                ctx.moveTo(this.x + CELL_SIZE/2 - 0.7,this.y + 8.6                 );
-                ctx.lineTo(this.x + CELL_SIZE/2 + 3.3,this.y + CELL_SIZE / 2 + 0.75); 
-                ctx.lineTo(this.x + CELL_SIZE/2 - 0.7,this.y + CELL_SIZE - 7       );
+                ctx.moveTo(x + CELL_SIZE/2 - 0.7, y + 8.6                 );
+                ctx.lineTo(x + CELL_SIZE/2 + 3.3, y + CELL_SIZE / 2 + 0.75); 
+                ctx.lineTo(x + CELL_SIZE/2 - 0.7, y + CELL_SIZE - 7       );
                 ctx.stroke();
                 break;
         }
+    }
+
+    checkNeighboringCells() {
+        this.hasNeighbors[0] = !checkDirection(organism.cells, this, Direction.above);
+        this.hasNeighbors[1] = !checkDirection(organism.cells, this, Direction.below);
+        this.hasNeighbors[2] = !checkDirection(organism.cells, this, Direction.left);
+        this.hasNeighbors[3] = !checkDirection(organism.cells, this, Direction.right);
     }
 }
 
@@ -154,14 +171,19 @@ class Organism {
         return possibleParents;
     }
 
-    getSelectedCell(scaledX, scaledY) {
+    setSelectedCell(scaledX, scaledY) {
         for (const cell of this.cells) {
             if (cell.scaledX == scaledX && cell.scaledY == scaledY) {
-                // set the cell to be selected
-                this.selected = cell;
-            } else {
-                // if the cell was not selected but the cells selected variable is true, set it to false
+                if (cell.type == CellTypes.bud) {
+                    // set the cell to be selected
+                    this.selected = cell;
+                    return;
+                } else {
+                    return;
+                }
             }
         }
+
+        this.selected = null;
     }
 }

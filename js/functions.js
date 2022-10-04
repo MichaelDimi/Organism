@@ -23,9 +23,16 @@ function spawnNewBud() {
             let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
             organism.cells.push(childCell);
 
-            setTimeout(() => {
-                childCell.setType(CellTypes.dead);
-            }, CELL_TIMEOUT);
+            for (const cell of organism.cells) {
+                cell.checkNeighboringCells();
+            }
+
+            // setTimeout(() => {
+            //     if (organism.selected == childCell) {
+            //         organism.selected = null;
+            //     }
+            //     childCell.setType(CellTypes.dead);
+            // }, CELL_TIMEOUT);
 
             return;
         } else {
