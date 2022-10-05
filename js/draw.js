@@ -15,14 +15,12 @@ function startGame() {
     center = { x: SCALED_X/2, y: SCALED_Y/2 };
     ctx = gameBoard.context;
 
-    let startCell = new cell(center.x, center.y, 
+    let startCell = new Cell(center.x, center.y, 
                              CELL_SIZE, CELL_SIZE, 
                              CellTypes.default, 
                              Direction.left);
     organism.cells.push(startCell);
     console.log(startCell);
-
-    startCell.checkNeighboringCells();
 
     draw();
 }
@@ -51,21 +49,6 @@ function draw() {
         let cell = organism.cells[i];
 
         cell.drawCell(GREEN);
-
-        if (cell === organism.selected) {
-            if (cell.hasNeighbors[0] == false) {
-                cell.drawArrow(0, -22, DEFAULT_COLOR_transparent, Direction.above);
-            }
-            if (cell.hasNeighbors[1] == false) {
-                cell.drawArrow(0, 22, DEFAULT_COLOR_transparent, Direction.below);
-            }
-            if (cell.hasNeighbors[2] == false) {
-                cell.drawArrow(-22, 0, DEFAULT_COLOR_transparent, Direction.left);
-            }
-            if (cell.hasNeighbors[3] == false) {
-                cell.drawArrow(22, 0, DEFAULT_COLOR_transparent, Direction.right);
-            }
-        }
     }
 
     requestAnimationFrame( draw );
