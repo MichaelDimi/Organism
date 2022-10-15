@@ -6,25 +6,6 @@ let cameraZoom = 1
 
 let viewCenter;
 
-// array of cells
-var organism = new Organism();
-
-function startGame() {
-    gameBoard.create();
-
-    center = { x: SCALED_X/2, y: SCALED_Y/2 };
-    ctx = gameBoard.context;
-
-    let startCell = new cell(center.x, center.y, 
-                             CELL_SIZE, CELL_SIZE, 
-                             CellTypes.default, 
-                             Direction.left);
-    organism.cells.push(startCell);
-    console.log(startCell);
-
-    draw();
-}
-
 function draw() {
     gameBoard.update();
 
@@ -40,29 +21,21 @@ function draw() {
     // TODO: Compute rendering box
 
     // MARK: Do all rendering here // only render things that are bounded by the rendering box
+    ctx.fillStyle = DEFAULT_COLOR;
+    ctx.beginPath();
+    ctx.arc(canvas.width/2 + 0.8, canvas.height/2 + 0.8, 4, 0, 2*Math.PI);
+    ctx.fill();
+
     for (let i = 0; i < organism.cells.length; i++) { // draw all cells in organism
-        if (organism.cells[i] === organism.selected) {
-            organism.cells[i].drawCell(CELL_SELECT_COLOR);
-        } else {
-            organism.cells[i].drawCell(GREEN);
-        }
+        let cell = organism.cells[i];
+
+        cell.drawCell(GREEN);
     }
 
-    requestAnimationFrame( draw );
+    for (let i = 0; i < foods.length; i++) {
+        let food = foods[i];
+        food.drawFood();
+    }
 }
 
-// Helper draw Fncitons
-// Render curved rectangles
-CanvasRenderingContext2D.prototype.roundedRect = function (x, y, w, h, r) {
-    // Make sure radius is not bigger than the height or width
-    if (w < 2 * r) r = w / 2;
-    if (h < 2 * r) r = h / 2;
-    this.beginPath();
-    this.moveTo(x+r, y);
-    this.arcTo(x+w, y,   x+w, y+h, r);
-    this.arcTo(x+w, y+h, x,   y+h, r);
-    this.arcTo(x,   y+h, x,   y,   r);
-    this.arcTo(x,   y,   x+w, y,   r);
-    this.closePath();
-    return this;
-}
+

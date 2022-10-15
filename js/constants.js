@@ -1,10 +1,11 @@
 let CANVAS_W = 130*30; // 
 let CANVAS_H = 100*30; // 3000
+const dpr = window.devicePixelRatio || 1;
 let SCALED_X = CANVAS_W / 30; // 100 scaled x-positions * 120 scaled y-positions
 let SCALED_Y = CANVAS_H / 30;
 
-let MAX_ZOOM = 5
-let MIN_ZOOM = 0.1
+let MAX_ZOOM = 3
+let MIN_ZOOM = 0.1    // 0.5
 let SCROLL_SENSITIVITY = 0.005
 
 let CELL_SIZE = 27;
@@ -15,9 +16,13 @@ let CELL_TIMEOUT = 5000.0;
 let BACKGROUND_COLOR = "#FFF";
 
 let DEFAULT_COLOR = "#071D29";
+let DEFAULT_COLOR_transparent = "rgba(7, 29, 41, 0.30)";
 let GREEN = "#018535";
-let RED = "#9E0039";
-let ORANGE = "#D24A3B";
+let LIGHT_GREEN = "#BFE0CD";
+let RED = "#C90000";
+let LIGHT_RED = "#FABFCD"
+let ORANGE = "#F15353";
+let LIGHT_ORANGE = "#FBD8BF"
 let CELL_SELECT_COLOR = "#0885CB";
 
 const CellTypes = {

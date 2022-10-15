@@ -14,28 +14,43 @@ function spawnNewBud() {
 
     let dir;
 
-    // Check each direction that there is not cell there, and break once a valid direction is found
+    // Break once a valid direction is found
     for (let i = 0; i < directions.length; i++) {
         let isValid = checkDirection(organism.cells, parentCell, directions[i]);
+        // If a cell is spawned
         if (isValid) { 
             dir = directions[i];
 
-            let childCell = new cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
+            // Create the cell and add to organism
+            let childCell = new Cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
             organism.cells.push(childCell);
-
-            setTimeout(() => {
-                childCell.setType(CellTypes.dead);
-            }, CELL_TIMEOUT);
+            
+            // If there is a cell above
+            if (!checkDirection(organism.cells, childCell, Direction.above)) {
+                // Set the child cell to have no top arrow
+                childCell.setTopArrow(null);
+                // Update the cell above to have not bottom arrow
+                organism.getCell(childCell.scaledX, childCell.scaledY - 1).setBottomArrow(null);
+            }
+            if (!checkDirection(organism.cells, childCell, Direction.below)) {
+                childCell.setBottomArrow(null);
+                organism.getCell(childCell.scaledX, childCell.scaledY + 1).setTopArrow(null);
+            }
+            if (!checkDirection(organism.cells, childCell, Direction.left)) {
+                childCell.setLeftArrow(null);
+                organism.getCell(childCell.scaledX - 1, childCell.scaledY).setRightArrow(null);
+            }
+            if (!checkDirection(organism.cells, childCell, Direction.right)) {
+                childCell.setRightArrow(null);
+                organism.getCell(childCell.scaledX + 1, childCell.scaledY).setLeftArrow(null);
+            }
 
             return;
-        } else {
-            // Remove from possible parents
-            console.log("Not Valid Direction");
         }
     }
     
-    // If it checks all directions and does not return the function, set the parent cell to be invalid
-    // Removes it from being checked in the future
+    console.log("Not Valid Direction");
+    // Removes it from being checked in the futur
     parentCell.isPossibleParent = false;
 
 }
