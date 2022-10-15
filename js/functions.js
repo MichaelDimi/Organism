@@ -80,3 +80,12 @@ function checkDirection(cells, parent, dir) {
 
     return true
 }
+
+function killRandBud(n){
+    let buds = organism.getBuds();
+    for(let i = 0; i<n; i++){
+        let rand = randomInt(buds.length+1);
+        buds[rand].setType(CellTypes.dead);
+    }
+}
+
