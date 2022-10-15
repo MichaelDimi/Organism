@@ -1,8 +1,26 @@
 class Organism {
     constructor() {
+        this.energy = 100.0; 
         this.cells = [];
-        this.energy = 100.0;
         this.selected;
+
+        this.cells.push = function () {
+            //Do what you want here...
+            document.getElementById("cell-counter").innerHTML++;
+            return Array.prototype.push.apply(this, arguments);
+        }
+    }
+
+    get getEnergy() {
+        return this.energy;
+    }
+
+    set setEnergy(newEnergy) {
+        this.energy = newEnergy;
+    }
+
+    getSize() {
+        return this.cells.length;
     }
 
     getDefaultCells() {
@@ -74,5 +92,9 @@ class Organism {
         }
 
         this.selected = null;
+    }
+
+    getSelectedCell() {
+        return this.selected;
     }
 }

@@ -6,25 +6,6 @@ let cameraZoom = 1
 
 let viewCenter;
 
-// array of cells
-var organism = new Organism();
-
-function startGame() {
-    gameBoard.create();
-
-    center = { x: SCALED_X/2, y: SCALED_Y/2 };
-    ctx = gameBoard.context;
-
-    let startCell = new Cell(center.x, center.y, 
-                             CELL_SIZE, CELL_SIZE, 
-                             CellTypes.default, 
-                             Direction.left);
-    organism.cells.push(startCell);
-    console.log(startCell);
-
-    draw();
-}
-
 function draw() {
     gameBoard.update();
 
@@ -51,6 +32,10 @@ function draw() {
         cell.drawCell(GREEN);
     }
 
-    requestAnimationFrame( draw );
+    for (let i = 0; i < foods.length; i++) {
+        let food = foods[i];
+        food.drawFood();
+    }
 }
+
 

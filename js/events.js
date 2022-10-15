@@ -25,19 +25,67 @@ function onPointerUp(e) {
     isMouseDown = false;
 
     if (!isDragging) {
-        // Register click
-        let click = getEventLocation(e);
+        if (!gameover) {
+            // Register click
+            let click = getEventLocation(e);
 
-        let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
-        let canvasBounds = canvas.getBoundingClientRect();
+            let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
+            let canvasBounds = canvas.getBoundingClientRect();
 
-        let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
-        let canvasClickX = (click.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
-        let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
-        let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
-        let scaledClickX = Math.round( canvasClickX / 30 );
-        let scaledClickY = Math.round( canvasClickY / 30 );
-        organism.setSelectedCell(scaledClickX, scaledClickY);
+            let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
+            let canvasClickX = (click.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
+            let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
+            let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
+            let scaledClickX = Math.round( canvasClickX / 30 );
+            let scaledClickY = Math.round( canvasClickY / 30 );
+
+            let selectedCell = organism.getSelectedCell();
+            
+            if (organism.selected != null && !paused) {
+                // Check if an arrow was just clicked
+                let topArrowScaledPos, bottomArrowScaledPos, leftArrowScaledPos, rightArrowScaledPos;
+                if (selectedCell.topArrow != null) {
+                    topArrowScaledPos = { 
+                        x: selectedCell.topArrow.cellScaledX, 
+                        y: selectedCell.topArrow.cellScaledY - 1 
+                    }
+                    if (scaledClickX == topArrowScaledPos.x && scaledClickY == topArrowScaledPos.y) {
+                        selectedCell.moveCell(Direction.above);
+                    }
+                }
+                if (selectedCell.bottomArrow != null) {
+                    bottomArrowScaledPos = { 
+                        x: selectedCell.bottomArrow.cellScaledX, 
+                        y: selectedCell.bottomArrow.cellScaledY + 1 
+                    }
+                    if (scaledClickX == bottomArrowScaledPos.x && scaledClickY == bottomArrowScaledPos.y) {
+                        selectedCell.moveCell(Direction.below);
+                    }
+                }
+                if (selectedCell.leftArrow != null) {
+                    leftArrowScaledPos = { 
+                        x: selectedCell.leftArrow.cellScaledX - 1, 
+                        y: selectedCell.leftArrow.cellScaledY 
+                    }
+                    if (scaledClickX == leftArrowScaledPos.x && scaledClickY == leftArrowScaledPos.y) {
+                        selectedCell.moveCell(Direction.left);
+                    }
+                }
+                if (selectedCell.rightArrow != null) {
+                    rightArrowScaledPos = { 
+                        x: selectedCell.rightArrow.cellScaledX + 1, 
+                        y: selectedCell.rightArrow.cellScaledY 
+                    }
+                    if (scaledClickX == rightArrowScaledPos.x && scaledClickY == rightArrowScaledPos.y) {
+                        selectedCell.moveCell(Direction.right);
+                    }
+                }
+
+                selectedCell.computeCellArrows();
+            }
+
+            organism.setSelectedCell(scaledClickX, scaledClickY);
+        }
     }
 
     isDragging = false;
@@ -47,10 +95,36 @@ function onPointerUp(e) {
 }
 
 function onPointerMove(e){
-    if (isMouseDown) {
+    if (isMouseDown) { // TODO: Give some error to movement
         isDragging = true;
-        cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x
-        cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y
+
+        let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
+        let canvasBounds = canvas.getBoundingClientRect();
+
+        cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x;    
+        cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y;
+
+        let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
+        let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
+        
+        if (cameraOffset.x >= 500) {
+            cameraOffset.x = 500;
+            dragStart.x = getEventLocation(e).x / cameraZoom - cameraOffset.x;
+        } else if (cameraOffset.x <= -500) {
+            cameraOffset.x = -500;
+            dragStart.x = getEventLocation(e).x / cameraZoom - cameraOffset.x;
+        }
+        if (cameraOffset.y >= 500) {
+            cameraOffset.y = 500;
+            dragStart.y = getEventLocation(e).y / cameraZoom - cameraOffset.y;
+        } else if (cameraOffset.y <= -500) {
+            cameraOffset.y = -500;
+            dragStart.y = getEventLocation(e).y / cameraZoom - cameraOffset.y;
+        }
+
+        // TODO: Used with LERP
+        // cameraOffset.x = lerp(cameraOffset.x, getEventLocation(e).x/cameraZoom - dragStart.x, 0.5);
+        // cameraOffset.y = lerp(cameraOffset.y, getEventLocation(e).y/cameraZoom - dragStart.y, 0.5);
     } else {
         let pos = getEventLocation(e);
 
@@ -65,7 +139,7 @@ function onPointerMove(e){
         let scaledPosX = Math.round( canvasClickX / 30 );
         let scaledPosY = Math.round( canvasClickY / 30 );
 
-        if (organism.selected != null) {
+        if (!gameover && !paused && organism.selected != null) {
             // UP
             if (organism.selected.topArrow != null) {
                 if (scaledPosX == organism.selected.scaledX && scaledPosY == organism.selected.scaledY - 1) {
@@ -99,7 +173,6 @@ function onPointerMove(e){
                 }
             }
         }
-        
     }
 }
 
@@ -116,6 +189,11 @@ function adjustZoom(zoomAmount, zoomFactor) {
         cameraZoom = Math.min( cameraZoom, MAX_ZOOM );
         cameraZoom = Math.max( cameraZoom, MIN_ZOOM );
     }
+}
+
+// TODO: Used in linear Interpolation - May come back to
+function lerp (start, end, amt) {
+    return (1-amt)*start+amt*end
 }
 
 

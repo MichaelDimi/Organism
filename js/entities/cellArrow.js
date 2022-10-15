@@ -1,14 +1,17 @@
 class CellArrow  {
-    constructor(scaledX, scaledY, offsetX, offsetY, direction, color) {
-        this.scaledX = scaledX;
-        this.scaledY = scaledY;
+    constructor(cellScaledX, cellScaledY, offsetX, offsetY, direction, color) {
+        this.cellScaledX = cellScaledX;
+        this.cellScaledY = cellScaledY;
 
         this.direction = direction;
 
         this.color = color;
 
-        this.x = (this.scaledX * 30 - CELL_SIZE / 2) + offsetX;
-        this.y = (this.scaledY * 30 - CELL_SIZE / 2) + offsetY;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
+
+        this.x = (this.cellScaledX * 30 - CELL_SIZE / 2) + this.offsetX;
+        this.y = (this.cellScaledY * 30 - CELL_SIZE / 2) + this.offsetY;
     }
 
     setColor(color) {
@@ -55,6 +58,15 @@ class CellArrow  {
                 ctx.stroke();
                 break;
         }
+    }
+
+    setCellScaledPos(cellScaledX, cellScaledY) {
+        this.cellScaledX = cellScaledX;
+        this.x = (this.cellScaledX * 30 - CELL_SIZE / 2) + this.offsetX;
+        this.cellScaledY = cellScaledY;
+        this.y = (this.cellScaledY * 30 - CELL_SIZE / 2) + this.offsetY;
+
+        console.log(this)
     }
 }
 

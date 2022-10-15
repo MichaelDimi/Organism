@@ -1,3 +1,12 @@
+@font-face {
+    font-family: Inter-Black;
+    src: url(/fonts/Inter/Inter-Black.ttf);
+}
+@font-face {
+    font-family: Inter-bold;
+    src: url(/fonts/Inter/Inter-Bold.ttf);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -33,23 +42,121 @@ body {
     position: relative;
 }
 
-.energy-bar-container {
-    width: 65%;
-    height: 8px;
-    top: 15px;
-    border-radius: 500px;
-    border: 2px solid white;
+/* TOP BAR */
+.bar-container {
     position: absolute;
+    top: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#pause-play-btn {
+    width: 14px;
+    height: 16px;
+    margin-right: 10px;
+    position: relative; /* Used for play icon */
+}
+.pause-icon {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+.left-bar, .right-bar {
+    height: 100%;
+    width: 6px;
+    border-radius: 100px;
+    background-color: #C1C6CA;
+}
+#pause-play-btn:hover .left-bar, #pause-play-btn:hover .right-bar {
+    background-color: #071D29;
+}
+.play-icon {
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    top: -1px;
+    left: -1px;
+}
+.play-icon > path {
+    fill: #C1C6CA;
+}
+#pause-play-btn:hover .play-icon > path {
+    fill: #071D29;
+}
+
+#speed-up-btn {
+    width: 24px;
+    height: 17px;
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+}
+.speed-up-path {
+    fill: #C1C6CA;
+}
+#speed-up-btn:hover .speed-up-path {
+    fill: #071D29;
+}
+
+#energy-bar-container {
+    width: 50%;
+    height: 8px;
+    border-radius: 500px;
     background-color: #BFE0CD;
+    overflow: hidden;
+    position: relative;
 }
 
 #energy-bar {
-    width: 65%;
-    height: 8px;
+    /* width: 65%; */
+    height: 100%;
     top: 0;
     left: 0;
     border-radius: 500px;
     /* border: 2px solid white; */
     position: absolute;
     background-color: #018535;
+}
+
+/* CELL COUNTER */
+.cell-counter-container {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 20px;
+    z-index: 999;
+
+    min-width: 20px;
+    width: fit-content;
+    height: 20px;
+
+    background-color: white;
+    border: 4px solid #838E94;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cell-counter-container::after {
+    content: "";
+    position: absolute;
+    top: -5px; 
+    bottom: -5px;
+    left: -5px;
+    right: -5px;
+
+    border-radius: 11px;
+    border: 1px solid white;
+}
+
+#cell-counter { 
+    width: fit-content;
+    padding: 1.5px 4px;
+
+    font-family: Inter-Bold;
+    font-size: 13px;
+    color: #838E94;
 }
