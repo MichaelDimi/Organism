@@ -24,8 +24,11 @@ class Cell {
         if (this.type == CellTypes.bud) {
             this.centerArrow = new CellArrow(this.scaledX, this.scaledY, 0, 0, this.direction, DEFAULT_COLOR);
 
-            // MARK: May remove - Not sure if we ever go from dead or default, to bud.
-            this.computeCellArrows()
+            // Set the arrows when a new cell spawns
+            this.computeCellArrows();
+
+            // Assign this cell to nearby food when it spawns
+            // Don't compute previous moves (there are none)
 
         } else {
             this.centerArrow = null;
@@ -38,29 +41,73 @@ class Cell {
 
     computeCellArrows() {
         // Check its neighbors and then set arrows
-        if (checkDirection(organism.cells, this, Direction.above)) {
+        if (checkDirection(this, Direction.above)) {
             this.topArrow = new CellArrow(this.scaledX, this.scaledY, 0, -22, Direction.above, DEFAULT_COLOR_transparent);
         } else {
             this.setTopArrow(null);
-            organism.getCell(this.scaledX, this.scaledY - 1).setBottomArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX, this.scaledY - 1);
+            if (adjacentCell != undefined) {
+                adjacentCell.setBottomArrow(null);
+            }
         }
-        if (checkDirection(organism.cells, this, Direction.below)) {
+        if (checkDirection(this, Direction.below)) {
             this.bottomArrow = new CellArrow(this.scaledX, this.scaledY, 0, 22, Direction.below, DEFAULT_COLOR_transparent);
         } else {
             this.setBottomArrow(null);
-            organism.getCell(this.scaledX, this.scaledY + 1).setTopArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX, this.scaledY + 1);
+            if (adjacentCell != undefined) {
+                adjacentCell.setTopArrow(null);
+            }
         }
-        if (checkDirection(organism.cells, this, Direction.left)) {
+        if (checkDirection(this, Direction.left)) {
             this.leftArrow = new CellArrow(this.scaledX, this.scaledY, -22, 0, Direction.left, DEFAULT_COLOR_transparent);
         } else {
             this.setLeftArrow(null);
-            organism.getCell(this.scaledX - 1, this.scaledY).setRightArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX - 1, this.scaledY);
+            if (adjacentCell != undefined) {
+                adjacentCell.setRightArrow(null);
+            }
         }
-        if (checkDirection(organism.cells, this, Direction.right)) {
+        if (checkDirection(this, Direction.right)) {
             this.rightArrow = new CellArrow(this.scaledX, this.scaledY, 22, 0, Direction.right, DEFAULT_COLOR_transparent);
         } else {
             this.setRightArrow(null);
-            organism.getCell(this.scaledX + 1, this.scaledY).setLeftArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX + 1, this.scaledY);
+            if (adjacentCell != undefined) {
+                adjacentCell.setLeftArrow(null);
+            }
+        }
+    }
+
+    computeAdjacentCellArrows() {
+        // If there is a cell above
+        if (!checkDirection(this, Direction.above)) {
+            // Set the child cell to have no top arrow
+            this.setTopArrow(null);
+            // Update the cell above to have not bottom arrow
+            let adjacentCell = organism.getCell(this.scaledX, this.scaledY - 1);
+            // Check not null in case the obstruction is not a cell (food, etc.)
+            if (adjacentCell != undefined) {
+                adjacentCell.setBottomArrow(null);
+            }            
+        } else if (!checkDirection(this, Direction.below)) {
+            this.setBottomArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX, this.scaledY + 1);
+            if (adjacentCell != undefined) {
+                adjacentCell.setTopArrow(null);
+            }
+        } else if (!checkDirection(this, Direction.left)) {
+            this.setLeftArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX - 1, this.scaledY);
+            if (adjacentCell != undefined) {
+                adjacentCell.setRightArrow(null);
+            }
+        } else if (!checkDirection(this, Direction.right)) {
+            this.setRightArrow(null);
+            let adjacentCell = organism.getCell(this.scaledX + 1, this.scaledY);
+            if (adjacentCell != undefined) {
+                adjacentCell.setLeftArrow(null);
+            }
         }
     }
 
@@ -101,17 +148,43 @@ class Cell {
     }
 
     moveCell(direction) {
-        console.log(direction)
+        // Get the current x and y for use after moving
+        // Used to figure out if the food should stop flashing
+        let prevX = this.scaledX;
+        let prevY = this.scaledY;
+
         // Set the new scaledX/Y (Also recomputes x and y)
         this.setScaledPos(this.scaledX + direction.x, this.scaledY + direction.y);
         this.setDirection(direction);
+
+        obstructions.push({ x: this.scaledX, y: this.scaledY });
         
         // spawn a new cell in the cells previous position
-        let newCell = new Cell(this.scaledX - direction.x, 
-                               this.scaledY - direction.y,
+        let newCell = new Cell(prevX, 
+                               prevY,
                                CELL_SIZE, CELL_SIZE, CellTypes.default, 
                                Direction.down);
         organism.cells.push(newCell);
+        // No need to add this to the obstructions, 
+        //  since that coord was already added when the bud was spawned or moved
+
+        for (const food of foods) {
+            if ((this.scaledX == food.scaledX && this.scaledY == food.scaledY - 1) ||
+                (this.scaledX == food.scaledX && this.scaledY == food.scaledY + 1) ||
+                (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY) ||
+                (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY) ||
+                (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY + 1) ||
+                (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY - 1) ||
+                (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY + 1) ||
+                (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY - 1)) {
+                    food.neighborBuds.push(this);
+            } else {
+                if (food.neighborBuds.includes(this)) {
+                    food.neighborBuds.pop(this);
+                }
+            }
+            console.log(food.neighborBuds);
+        }
     }
 
     setScaledPos(scaledX, scaledY) {
@@ -147,4 +220,12 @@ class Cell {
     setRightArrow(rightArrow) {
         this.rightArrow = rightArrow
     }
+}
+
+class Bud extends Cell {
+
+}
+
+class Dead extends Cell {
+    
 }

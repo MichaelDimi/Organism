@@ -8,6 +8,13 @@ function randomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+// Returns random int from min -> max (both inclusive)
+function randomIntRange(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 CanvasRenderingContext2D.prototype.roundedRect = function (x, y, w, h, r) {
     // Make sure radius is not bigger than the height or width
     if (w < 2 * r) r = w / 2;

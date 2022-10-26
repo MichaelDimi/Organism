@@ -65,8 +65,6 @@ class CellArrow  {
         this.x = (this.cellScaledX * 30 - CELL_SIZE / 2) + this.offsetX;
         this.cellScaledY = cellScaledY;
         this.y = (this.cellScaledY * 30 - CELL_SIZE / 2) + this.offsetY;
-
-        console.log(this)
     }
 }
 

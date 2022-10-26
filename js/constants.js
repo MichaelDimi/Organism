@@ -1,8 +1,8 @@
-let CANVAS_W = 130*30; // 
-let CANVAS_H = 100*30; // 3000
+let SCALED_CANVAS_W = 130;
+let SCALED_CANVAS_H = 100;
+let CANVAS_W = SCALED_CANVAS_W*30; // 
+let CANVAS_H = SCALED_CANVAS_H*30; // 3000
 const dpr = window.devicePixelRatio || 1;
-let SCALED_X = CANVAS_W / 30; // 100 scaled x-positions * 120 scaled y-positions
-let SCALED_Y = CANVAS_H / 30;
 
 let MAX_ZOOM = 3
 let MIN_ZOOM = 0.1    // 0.5
@@ -24,6 +24,11 @@ let LIGHT_RED = "#FABFCD"
 let ORANGE = "#F15353";
 let LIGHT_ORANGE = "#FBD8BF"
 let CELL_SELECT_COLOR = "#0885CB";
+let FOOD_COLOR = {
+    normal: "rgba(42, 146, 242, 100)",
+    light: "rgba(42, 146, 242, 25)",
+    blink: "rgba(42, 146, 242, "
+}
 
 const CellTypes = {
     default: "Default",

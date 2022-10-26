@@ -5,7 +5,6 @@ class Organism {
         this.selected;
 
         this.cells.push = function () {
-            //Do what you want here...
             document.getElementById("cell-counter").innerHTML++;
             return Array.prototype.push.apply(this, arguments);
         }
@@ -96,5 +95,13 @@ class Organism {
 
     getSelectedCell() {
         return this.selected;
+    }
+
+    getBudPositions() {
+        let positions = [];
+        for (const bud of organism.getBuds()) {
+            positions.push({ x: bud.scaledX, y: bud.scaledY })
+        }
+        return positions;
     }
 }

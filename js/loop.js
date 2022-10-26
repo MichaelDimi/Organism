@@ -2,17 +2,22 @@ let oldTimeStamp = 0.0;
 let fps;
 let msPerTick = 1000;
 
+let clock = 0;
+
 let paused = false;
 let gameover = false;
 
 // array of cells
 var organism = new Organism();
 var foods = [];
+// An array of coordinates where there is something 
+// Cell, Food, Wall*
+var obstructions = [];
 
 function startGame() {
     gameBoard.create();
 
-    center = { x: SCALED_X/2, y: SCALED_Y/2 };
+    center = { x: SCALED_CANVAS_W/2, y: SCALED_CANVAS_H/2 };
     ctx = gameBoard.context;
     ctx.imageSmoothingEnabled = false;
 
@@ -21,25 +26,26 @@ function startGame() {
                              CellTypes.default, 
                              Direction.left);
     organism.cells.push(startCell);
+    obstructions.push({ x: startCell.scaledX, y: startCell.scaledY });
 
     window.setTimeout(() => {
         spawnNewBud();
     }, 1000)
 
-    let firstFood = new Food(63, 50);
-    foods.push(firstFood);
+    spawnRandomFood(center, 5);
+    spawnRandomFood(center, 5);
+    spawnRandomFood(center, 5);
+    // spawnRandomFood(center, 5);
+    // spawnRandomFood(center, 5);
 
-    console.log(organism.cells[0]);
+    // console.log(organism.cells[0]);
 
     requestAnimationFrame( loop )
 }
 
-let timout = {
-    
-    four: 0.0
-}
+let timeout = 0.0;
 function update(seconds) {
-    timout.four += seconds;
+    timeout += seconds;
 
     let bar = document.getElementById("energy-bar");
     let barContainer = document.getElementById("energy-bar-container")
@@ -54,19 +60,17 @@ function update(seconds) {
     } else if (organism.energy < 55) {
         bar.style.backgroundColor = ORANGE;
         barContainer.style.backgroundColor = LIGHT_ORANGE;
-    } 
+    }
 
-    // 4 second clock
-    if (timout.four >= 0.1) {
-        spawnNewBud();
+    // 1/10 second clock
+    if (timeout >= 0.1) {
 
-        if (foods[0].color == ORANGE) {
-            foods[0].color = LIGHT_ORANGE;
-        } else if (foods[0].color == LIGHT_ORANGE) {
-            foods[0].color = ORANGE;
+        clock++;
+        if (clock % 40 == 0) {
+            spawnNewBud();
         }
 
-        timout.four -= 0.1;
+        timeout -= 0.1;
     }
 
     dEnergy = organism.energy - (seconds * (organism.getSize() / 12));
@@ -74,6 +78,17 @@ function update(seconds) {
     
     bar.style.width = (organism.energy) + "%";
 } 
+
+function gamePausedUpdate() {
+    for (const food of foods) {
+        if (food.neighborBuds.length > 0) {
+            food.blink();
+        } else {
+            food.color = FOOD_COLOR.normal;
+        }
+    }
+
+}
 
 function loop(timeStamp) {
     // Calculate the number of seconds passed since the last frame
@@ -86,6 +101,7 @@ function loop(timeStamp) {
     if (!gameover && !paused) {
         update(secondsPassed);
     }
+    gamePausedUpdate();
     draw();
 
     requestAnimationFrame( loop );

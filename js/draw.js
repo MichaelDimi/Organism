@@ -26,12 +26,14 @@ function draw() {
     ctx.arc(canvas.width/2 + 0.8, canvas.height/2 + 0.8, 4, 0, 2*Math.PI);
     ctx.fill();
 
-    for (let i = 0; i < organism.cells.length; i++) { // draw all cells in organism
+    // Draw all cells in organism
+    for (let i = 0; i < organism.cells.length; i++) { 
         let cell = organism.cells[i];
 
         cell.drawCell(GREEN);
     }
 
+    // Draw all foods
     for (let i = 0; i < foods.length; i++) {
         let food = foods[i];
         food.drawFood();

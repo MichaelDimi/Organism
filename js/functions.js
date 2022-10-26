@@ -16,7 +16,7 @@ function spawnNewBud() {
 
     // Break once a valid direction is found
     for (let i = 0; i < directions.length; i++) {
-        let isValid = checkDirection(organism.cells, parentCell, directions[i]);
+        let isValid = checkDirection(parentCell, directions[i]);
         // If a cell is spawned
         if (isValid) { 
             dir = directions[i];
@@ -24,35 +24,34 @@ function spawnNewBud() {
             // Create the cell and add to organism
             let childCell = new Cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
             organism.cells.push(childCell);
+            obstructions.push({ x: childCell.scaledX, y: childCell.scaledY });
             
-            // If there is a cell above
-            if (!checkDirection(organism.cells, childCell, Direction.above)) {
-                // Set the child cell to have no top arrow
-                childCell.setTopArrow(null);
-                // Update the cell above to have not bottom arrow
-                organism.getCell(childCell.scaledX, childCell.scaledY - 1).setBottomArrow(null);
-            }
-            if (!checkDirection(organism.cells, childCell, Direction.below)) {
-                childCell.setBottomArrow(null);
-                organism.getCell(childCell.scaledX, childCell.scaledY + 1).setTopArrow(null);
-            }
-            if (!checkDirection(organism.cells, childCell, Direction.left)) {
-                childCell.setLeftArrow(null);
-                organism.getCell(childCell.scaledX - 1, childCell.scaledY).setRightArrow(null);
-            }
-            if (!checkDirection(organism.cells, childCell, Direction.right)) {
-                childCell.setRightArrow(null);
-                organism.getCell(childCell.scaledX + 1, childCell.scaledY).setLeftArrow(null);
-            }
+            childCell.computeAdjacentCellArrows();
 
             return;
         }
     }
     
     console.log("Not Valid Direction");
-    // Removes it from being checked in the futur
+    // Removes it from being checked in the future
     parentCell.isPossibleParent = false;
+}
 
+function spawnRandomFood(origin, scaledD) {
+    console.log(origin)
+
+    let randX = randomIntRange(origin.x - scaledD, origin.x + scaledD);
+    let randY = randomIntRange(origin.y - scaledD, origin.y + scaledD);
+
+    // Make sure there is no obstruction at (randX, randY)
+    if (isObstructedAt(randX, randY)) {
+        console.log("Couldn't spawn food")
+        return;
+    }
+
+    let newFood = new Food(randX, randY);
+    foods.push(newFood);
+    obstructions.push({ x: newFood.scaledX, y: newFood.scaledY });
 }
 
 function getRandomDirections() {
@@ -70,13 +69,24 @@ function getRandomDirections() {
     return possibleDirections;
 }
 
-function checkDirection(cells, parent, dir) {
-    // loop through cells to check if there is a cell in that direction
-    for (let i = 0; i < cells.length; i++) {
-        if (parent.scaledX + dir.x == cells[i].scaledX && parent.scaledY + dir.y == cells[i].scaledY) {
+function checkDirection(origin, dir) {
+    // Loop through obstructions to see if there is something there
+    for (let i = 0; i < obstructions.length; i++) {
+        let obstr = obstructions[i];
+        if (origin.scaledX + dir.x == obstr.x && origin.scaledY + dir.y == obstr.y) {
             return false;
         }
     }
 
-    return true
+    return true;
+}
+
+function isObstructedAt(scaledX, scaledY) {
+    for (let i = 0; i < obstructions.length; i++) {
+        let obstr = obstructions[i];
+        if (scaledX == obstr.x && scaledY == obstr.y) {
+            return true;
+        }
+    }
+    return false;
 }
