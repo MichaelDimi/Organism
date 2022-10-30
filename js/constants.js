@@ -5,7 +5,7 @@ let CANVAS_H = SCALED_CANVAS_H*30; // 3000
 const dpr = window.devicePixelRatio || 1;
 
 let MAX_ZOOM = 3
-let MIN_ZOOM = 0.1    // 0.5
+let MIN_ZOOM = 0.5    // 0.5
 let SCROLL_SENSITIVITY = 0.005
 
 let CELL_SIZE = 27;
@@ -26,14 +26,8 @@ let LIGHT_ORANGE = "#FBD8BF"
 let CELL_SELECT_COLOR = "#0885CB";
 let FOOD_COLOR = {
     normal: "rgba(42, 146, 242, 100)",
-    light: "rgba(42, 146, 242, 25)",
+    light: "rgba(42, 146, 242, 0.4)",
     blink: "rgba(42, 146, 242, "
-}
-
-const CellTypes = {
-    default: "Default",
-    bud: "Bud",
-    dead: "Dead" 
 }
 
 // Where a new cell will be placed relative to parent

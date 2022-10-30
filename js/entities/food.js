@@ -1,19 +1,27 @@
 class Food {
+    static STATE = {
+        idle: "idle",
+        growing: "growing",
+        growm: "grown"
+    }
+
     constructor(scaledX, scaledY) {
         this.scaledX = scaledX;
         this.scaledY = scaledY;
-
-        this.color = FOOD_COLOR.normal;
-        // this.opacity = 0;
-
-        this.shouldBlink = false;
-
-        this.neighborBuds = [];
 
         this.x = this.scaledX * 30 - CELL_SIZE / 2;
         this.y = this.scaledY * 30 - CELL_SIZE / 2;
         this.width = CELL_SIZE;
         this.height = CELL_SIZE;
+
+        this.color = FOOD_COLOR.light;
+
+        this.neighborBuds = [];
+
+        this.state = Food.STATE.idle;
+
+        this.timeSinceGrown = 0;
+
     }
 
     // MARK: Depricated

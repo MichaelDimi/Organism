@@ -22,7 +22,7 @@ function spawnNewBud() {
             dir = directions[i];
 
             // Create the cell and add to organism
-            let childCell = new Cell(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, CellTypes.bud, dir);
+            let childCell = new Bud(parentCell.scaledX + dir.x, parentCell.scaledY + dir.y, CELL_SIZE, CELL_SIZE, dir);
             organism.cells.push(childCell);
             obstructions.push({ x: childCell.scaledX, y: childCell.scaledY });
             

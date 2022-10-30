@@ -10,6 +10,29 @@ class Organism {
         }
     }
 
+    killRandomBud() {
+        // Get list of buds
+        let buds = this.getBuds();
+        if (buds.length < 1) {
+            return;
+        }
+        // Get random bud
+        let randBudIndex = randomInt(buds.length)
+        let randomBud = buds[randBudIndex];
+        let randCellIndex = organism.cells.indexOf(randomBud);
+        
+        // Replace bud with new dead cell
+        let newDeadCell = new Dead(randomBud.scaledX, randomBud.scaledY, CELL_SIZE, CELL_SIZE);
+        organism.cells.splice(randCellIndex, 1, newDeadCell); 
+
+        // Make sure to remove the bud from each foods neighboring buds
+        for (const food of foods) {
+            if (food.neighborBuds.includes(randomBud)) {
+                food.neighborBuds.splice(food.neighborBuds.indexOf(randomBud), 1);
+            }
+        }
+    }
+
     get getEnergy() {
         return this.energy;
     }
@@ -36,7 +59,7 @@ class Organism {
     getBuds() {
         let budCells = [];
         for (const cell of this.cells) {
-            if (cell.type == CellTypes.bud) {
+            if (cell instanceof Bud) {
                 budCells.push(cell);
             }
         }
@@ -47,7 +70,7 @@ class Organism {
     getDeadCells() {
         let deadCells = [];
         for (const cell of this.cells) {
-            if (cell.type == CellTypes.dead) {
+            if (cell instanceof Dead) {
                 deadCells.push(cell);
             }
         }
@@ -58,7 +81,7 @@ class Organism {
     getPossibleParents() {
         let possibleParents = [];
         for (const cell of this.cells) {
-            if (cell.isPossibleParent) {
+            if (!(cell instanceof Bud) && !(cell instanceof Dead)) {
                 possibleParents.push(cell);
             }
         }
@@ -80,7 +103,7 @@ class Organism {
     setSelectedCell(scaledX, scaledY) {
         for (const cell of this.cells) {
             if (cell.scaledX == scaledX && cell.scaledY == scaledY) {
-                if (cell.type == CellTypes.bud) {
+                if (cell instanceof Bud) {
                     // set the cell to be selected
                     this.selected = cell;
                     return;
@@ -97,7 +120,8 @@ class Organism {
         return this.selected;
     }
 
-    getBudPositions() {
+    // Depricated
+    getBudPositions() { 
         let positions = [];
         for (const bud of organism.getBuds()) {
             positions.push({ x: bud.scaledX, y: bud.scaledY })

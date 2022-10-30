@@ -30,7 +30,7 @@ function draw() {
     for (let i = 0; i < organism.cells.length; i++) { 
         let cell = organism.cells[i];
 
-        cell.drawCell(GREEN);
+        cell.drawCell();
     }
 
     // Draw all foods

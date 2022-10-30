@@ -21,10 +21,7 @@ function startGame() {
     ctx = gameBoard.context;
     ctx.imageSmoothingEnabled = false;
 
-    let startCell = new Cell(center.x, center.y, 
-                             CELL_SIZE, CELL_SIZE, 
-                             CellTypes.default, 
-                             Direction.left);
+    let startCell = new Cell(center.x, center.y, CELL_SIZE, CELL_SIZE);
     organism.cells.push(startCell);
     obstructions.push({ x: startCell.scaledX, y: startCell.scaledY });
 
@@ -37,8 +34,6 @@ function startGame() {
     spawnRandomFood(center, 5);
     // spawnRandomFood(center, 5);
     // spawnRandomFood(center, 5);
-
-    // console.log(organism.cells[0]);
 
     requestAnimationFrame( loop )
 }
@@ -66,8 +61,15 @@ function update(seconds) {
     if (timeout >= 0.1) {
 
         clock++;
-        if (clock % 40 == 0) {
+        if (clock % 40 == 0) { // Every 4 seconds
             spawnNewBud();
+        }
+
+        if (clock % 50 == 0) { // Every 5 seconds
+            if (organism.energy < 90) {
+                // Kill random bud
+                // organism.killRandomBud(); // TODO: Bring this back
+            }
         }
 
         timeout -= 0.1;
@@ -82,9 +84,21 @@ function update(seconds) {
 function gamePausedUpdate() {
     for (const food of foods) {
         if (food.neighborBuds.length > 0) {
+            food.state = Food.STATE.growing;
+            if (food.timeSinceGrown == 500) {
+                food.color = FOOD_COLOR.normal;
+                continue;
+            } else {
+                food.timeSinceGrown += 1
+            }
+
             food.blink();
         } else {
-            food.color = FOOD_COLOR.normal;
+            food.color = FOOD_COLOR.light;
+            if (food.state == Food.STATE.growing) {
+                food.timeSinceGrown = 0;
+                food.state = Food.STATE.idle;
+            }
         }
     }
 
