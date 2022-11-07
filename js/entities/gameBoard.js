@@ -7,7 +7,7 @@ var gameBoard = {
     },
     update: function() {
         // Make canvas a multiple of 30
-        // TODO: Include defince pixel ratio
+        // TODO: Include device pixel ratio
         this.canvas.width = CANVAS_W; 
         this.canvas.height = CANVAS_H;
     }

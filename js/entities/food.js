@@ -2,7 +2,7 @@ class Food {
     static STATE = {
         idle: "idle",
         growing: "growing",
-        growm: "grown"
+        grown: "grown"
     }
 
     constructor(scaledX, scaledY) {
@@ -24,23 +24,14 @@ class Food {
 
     }
 
-    // MARK: Depricated
-    setShouldBlink(blink) {
-        if (blink == false) {
-            this.color = FOOD_COLOR.normal
-        }
-        this.shouldBlink = blink
-    }
-
     drawFood() {
-        // console.log(this);
 
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 4.2;
         ctx.lineCap = "round";
 
         let x = this.x + this.width / 2;
-        let y = this.y + this.height / 2;
+        let y = this.y + this.height / 2 + 1;
 
         ctx.beginPath();
         ctx.moveTo(x + 2, y - 6);
@@ -53,7 +44,13 @@ class Food {
     }
 
     blink() {
-        let opacity = 0.33*(Math.cos(0.01*oldTimeStamp) + 2); 
+        let blinkRate = 0.01 + (this.neighborBuds.length-1)/1000;
+        // 1 Bud  -> 0.010
+        // 2 Buds -> 0.011
+        // ...
+        // 8 Buds -> 0.017 (nearly impossible)
+
+        let opacity = 0.33*(Math.cos(blinkRate*oldTimeStamp) + 2); 
         this.color = FOOD_COLOR.blink + opacity + ")";
     }
 }

@@ -29,9 +29,9 @@ function startGame() {
         spawnNewBud();
     }, 1000)
 
-    spawnRandomFood(center, 5);
-    spawnRandomFood(center, 5);
-    spawnRandomFood(center, 5);
+    spawnRandomFood(center, 1);
+    // spawnRandomFood(center, 5);
+    // spawnRandomFood(center, 5);
     // spawnRandomFood(center, 5);
     // spawnRandomFood(center, 5);
 
@@ -49,26 +49,60 @@ function update(seconds) {
         bar.style.opacity = 0;
         gameover = true;
         return;
-    } else if (organism.energy < 20) {
+    } else if (organism.energy < 55) {
         bar.style.backgroundColor = RED;
         barContainer.style.backgroundColor = LIGHT_RED;
-    } else if (organism.energy < 55) {
-        bar.style.backgroundColor = ORANGE;
-        barContainer.style.backgroundColor = LIGHT_ORANGE;
+    }
+
+    // Handle food rendering // TODO: Test this shit
+    for (const food of foods) {
+        if (food.state == Food.STATE.grown) { // TODO: TEST
+            continue;
+        }
+        if (food.neighborBuds.length > 0) {
+            
+            if (food.timeSinceGrown >= -125*(food.neighborBuds.length - 1) + 500) {
+                food.color = FOOD_COLOR.normal;
+                food.state = Food.STATE.grown;
+                continue;
+            }
+
+            food.state = Food.STATE.growing;
+            food.timeSinceGrown += 1
+
+            food.blink();
+        } else {
+            food.color = FOOD_COLOR.light;
+            if (food.state == Food.STATE.growing) {
+                food.timeSinceGrown = 0;
+                food.state = Food.STATE.idle;
+            }
+        }
     }
 
     // 1/10 second clock
     if (timeout >= 0.1) {
 
         clock++;
-        if (clock % 40 == 0) { // Every 4 seconds
+        if (clock % 100 == 0) { // TODO:Every 20 seconds
             spawnNewBud();
         }
 
-        if (clock % 50 == 0) { // Every 5 seconds
-            if (organism.energy < 90) {
+        // Every 10 seconds
+        if (clock % 100 == 0) {
+            if (organism.energy < 50) {
                 // Kill random bud
-                // organism.killRandomBud(); // TODO: Bring this back
+                organism.killRandomBud();
+            }
+        }
+
+        let buds = organism.buds;
+        for (const bud of buds) {
+            if (bud.cooldown >= 0) {
+                bud.cooldown -= 0.01;
+            } 
+            if (bud.cooldown <= 0.01 && bud.cooldown > 0) {
+                checkCellArrowHover(canvasPosX, canvasPosY);
             }
         }
 
@@ -82,26 +116,7 @@ function update(seconds) {
 } 
 
 function gamePausedUpdate() {
-    for (const food of foods) {
-        if (food.neighborBuds.length > 0) {
-            food.state = Food.STATE.growing;
-            if (food.timeSinceGrown == 500) {
-                food.color = FOOD_COLOR.normal;
-                continue;
-            } else {
-                food.timeSinceGrown += 1
-            }
-
-            food.blink();
-        } else {
-            food.color = FOOD_COLOR.light;
-            if (food.state == Food.STATE.growing) {
-                food.timeSinceGrown = 0;
-                food.state = Food.STATE.idle;
-            }
-        }
-    }
-
+    
 }
 
 function loop(timeStamp) {

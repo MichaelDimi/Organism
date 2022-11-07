@@ -12,7 +12,6 @@ class Cell {
 
     setType(newType) {
         this.type = newType;
-        // this.isPossibleParent = this.type == CellTypes.default; // TODO: If its default it is valid parent
     }
     
     drawCell() {
@@ -39,6 +38,10 @@ class Bud extends Cell {
         this.bottomArrow = null;
         this.leftArrow = null;
         this.rightArrow = null;
+        this.drawArrows = true;
+
+        this.cooldown = 1;
+        // this.drawCooldown = false;
 
         this.centerArrow = new CellArrow(this.scaledX, this.scaledY, 0, 0, this.direction, DEFAULT_COLOR);
 
@@ -49,7 +52,8 @@ class Bud extends Cell {
         this.assignToFood();
     }
 
-    moveCell(direction) {
+    // TODO FIX: Moving out of the range of food, causes it to re-blink even if theres another bud their that should load it
+    moveCell(direction) { 
         // Get the current x and y for use after moving
         // Used to figure out if the food should stop flashing
         let prevX = this.scaledX;
@@ -66,6 +70,8 @@ class Bud extends Cell {
         organism.cells.push(newCell);
         // No need to add this to the obstructions, 
         //  since that coord was already added when the bud was spawned or moved
+
+        this.cooldown = 1;
 
         this.assignToFood();
     }
@@ -144,13 +150,13 @@ class Bud extends Cell {
 
     assignToFood() {
         for (const food of foods) {
-            if ((this.scaledX == food.scaledX && this.scaledY == food.scaledY - 1) ||
-                (this.scaledX == food.scaledX && this.scaledY == food.scaledY + 1) ||
-                (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY) ||
-                (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY) ||
+            if ((this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY + 1) ||
+                (this.scaledX == food.scaledX     && this.scaledY == food.scaledY + 1) ||
                 (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY + 1) ||
+                (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY    ) ||
+                (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY    ) ||
                 (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY - 1) ||
-                (this.scaledX == food.scaledX - 1 && this.scaledY == food.scaledY + 1) ||
+                (this.scaledX == food.scaledX     && this.scaledY == food.scaledY - 1) ||
                 (this.scaledX == food.scaledX + 1 && this.scaledY == food.scaledY - 1)) {
                     if (!food.neighborBuds.includes(this)) {
                         food.neighborBuds.push(this);
@@ -160,7 +166,6 @@ class Bud extends Cell {
                     food.neighborBuds.splice(this, 1);
                 }
             }
-            // console.log(food.neighborBuds);
         }
     }
 
@@ -203,6 +208,16 @@ class Bud extends Cell {
 
     drawCell() {
         ctx.lineWidth = CELL_STROKE;
+
+        // Draw transparent rectangle, height based on cooldown
+        let d = 2; 
+        ctx.fillStyle = "rgba(1, 133, 53, 0.25)";
+        ctx.fillRect(
+            this.x + d,
+            this.y + CELL_SIZE - d, 
+            CELL_SIZE - d, 
+            (-CELL_SIZE+6)*this.cooldown
+        );
 
         this.centerArrow.draw();
 

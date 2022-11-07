@@ -14,6 +14,11 @@ let dragStart = { x: 0, y: 0 }
 let initialPinchDistance = null
 let lastZoom = cameraZoom
 
+/* Stores the position of the mouse 
+    relative to the pan and zoom of the canvas */
+let canvasPosX = 0;
+let canvasPosY = 0;
+
 function onPointerDown(e) {
     isDragging = false;
     isMouseDown = true;
@@ -39,9 +44,9 @@ function onPointerUp(e) {
             let scaledClickX = Math.round( canvasClickX / 30 );
             let scaledClickY = Math.round( canvasClickY / 30 );
 
-            let selectedCell = organism.getSelectedCell();
-            
-            if (organism.selected != null && !paused) {
+            if (organism.selected != null && !paused && organism.selected.cooldown <= 0) {
+                let selectedCell = organism.getSelectedCell();
+
                 // Check if an arrow was just clicked
                 let topArrowScaledPos, bottomArrowScaledPos, leftArrowScaledPos, rightArrowScaledPos;
                 if (selectedCell.topArrow != null) {
@@ -49,7 +54,8 @@ function onPointerUp(e) {
                         x: selectedCell.topArrow.cellScaledX, 
                         y: selectedCell.topArrow.cellScaledY - 1 
                     }
-                    if (scaledClickX == topArrowScaledPos.x && scaledClickY == topArrowScaledPos.y) {
+                    if (canvasClickX <= organism.selected.x+CELL_SIZE && canvasClickX >= organism.selected.x &&
+                        canvasClickY <= organism.selected.y && canvasClickY >= organism.selected.y-CELL_SIZE*(2/3)) {
                         selectedCell.moveCell(Direction.above);
                     }
                 }
@@ -58,7 +64,8 @@ function onPointerUp(e) {
                         x: selectedCell.bottomArrow.cellScaledX, 
                         y: selectedCell.bottomArrow.cellScaledY + 1 
                     }
-                    if (scaledClickX == bottomArrowScaledPos.x && scaledClickY == bottomArrowScaledPos.y) {
+                    if (canvasClickX <= organism.selected.x+CELL_SIZE && canvasClickX >= organism.selected.x &&
+                        canvasClickY >= organism.selected.y+CELL_SIZE && canvasClickY <= organism.selected.y+CELL_SIZE+CELL_SIZE*(2/3)) {
                         selectedCell.moveCell(Direction.below);
                     }
                 }
@@ -67,7 +74,8 @@ function onPointerUp(e) {
                         x: selectedCell.leftArrow.cellScaledX - 1, 
                         y: selectedCell.leftArrow.cellScaledY 
                     }
-                    if (scaledClickX == leftArrowScaledPos.x && scaledClickY == leftArrowScaledPos.y) {
+                    if (canvasClickX <= organism.selected.x && canvasClickX >= organism.selected.x-CELL_SIZE*(2/3) &&
+                        canvasClickY >= organism.selected.y && canvasClickY <= organism.selected.y+CELL_SIZE) {
                         selectedCell.moveCell(Direction.left);
                     }
                 }
@@ -76,7 +84,8 @@ function onPointerUp(e) {
                         x: selectedCell.rightArrow.cellScaledX + 1, 
                         y: selectedCell.rightArrow.cellScaledY 
                     }
-                    if (scaledClickX == rightArrowScaledPos.x && scaledClickY == rightArrowScaledPos.y) {
+                    if (canvasClickX >= organism.selected.x+CELL_SIZE && canvasClickX <= organism.selected.x+CELL_SIZE+CELL_SIZE*(2/3) &&
+                        canvasClickY >= organism.selected.y && canvasClickY <= organism.selected.y+CELL_SIZE) {
                         selectedCell.moveCell(Direction.right);
                     }
                 }
@@ -85,7 +94,29 @@ function onPointerUp(e) {
             }
 
             organism.setSelectedCell(scaledClickX, scaledClickY);
+
+            // Check if a food was clicked
+            if (!paused) {
+                for (const food of foods) {
+                    if (scaledClickX == food.scaledX && scaledClickY == food.scaledY) {
+                        console.log(food.neighborBuds.length);
+                        if (food.state == Food.STATE.grown) {
+                            food.timeSinceGrown = 0;
+                            food.state = Food.STATE.idle;
+
+                            if (organism.energy + 10 > 100) {
+                                organism.energy += 100-organism.energy;
+                            } else {
+                                organism.energy += 10
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
         }
+    } else {
+        document.body.style.cursor = "default";
     }
 
     isDragging = false;
@@ -94,19 +125,17 @@ function onPointerUp(e) {
     lastZoom = cameraZoom
 }
 
-function onPointerMove(e){
+function onPointerMove(e) {
+    document.body.style.cursor = "default";
     if (isMouseDown) { // TODO: Give some error to movement
-        isDragging = true;
+        document.body.style.cursor = "move";
 
-        let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
-        let canvasBounds = canvas.getBoundingClientRect();
+        isDragging = true;
 
         cameraOffset.x = getEventLocation(e).x/cameraZoom - dragStart.x;    
         cameraOffset.y = getEventLocation(e).y/cameraZoom - dragStart.y;
-
-        let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
-        let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
         
+        // BOUNDS D: [-500,500] R: [-500,500]
         if (cameraOffset.x >= 500) {
             cameraOffset.x = 500;
             dragStart.x = getEventLocation(e).x / cameraZoom - cameraOffset.x;
@@ -127,51 +156,55 @@ function onPointerMove(e){
         // cameraOffset.y = lerp(cameraOffset.y, getEventLocation(e).y/cameraZoom - dragStart.y, 0.5);
     } else {
         let pos = getEventLocation(e);
+        if (pos == undefined || pos == null) {
+            console.log("Error with pos")
+            return;
+        }
 
         let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
         let canvasBounds = canvas.getBoundingClientRect();
 
         // Do hover checks
         let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
-        let canvasClickX = (pos.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
+        canvasPosX = (pos.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
         let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
-        let canvasClickY = (pos.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
-        let scaledPosX = Math.round( canvasClickX / 30 );
-        let scaledPosY = Math.round( canvasClickY / 30 );
+        canvasPosY = (pos.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
+
+        let scaledPosX = Math.round(canvasPosX / 30.0);
+        let scaledPosY = Math.round(canvasPosY / 30.0);
+
+        // Check bud hover
+        for (const bud of organism.buds) {
+            if (bud.scaledX == scaledPosX && bud.scaledY == scaledPosY) {
+                document.body.style.cursor = "pointer";
+                break;
+            }
+        }
+
+        // Check food hover
+        for (const food of foods) {
+            if (food.scaledX == scaledPosX && food.scaledY == scaledPosY) {
+                document.body.style.cursor = "pointer";
+                break;
+            }
+        }
 
         if (!gameover && !paused && organism.selected != null) {
-            // UP
-            if (organism.selected.topArrow != null) {
-                if (scaledPosX == organism.selected.scaledX && scaledPosY == organism.selected.scaledY - 1) {
-                    organism.selected.topArrow.setColor(DEFAULT_COLOR);
-                } else {
+
+            // Disable arrow hovers if selected cooldown > 0
+            if (organism.selected.cooldown > 0) {
+                if (organism.selected.topArrow != null)
                     organism.selected.topArrow.setColor(DEFAULT_COLOR_transparent);
-                }
-            }
-            // DOWN
-            if (organism.selected.bottomArrow != null) {
-                if (scaledPosX == organism.selected.scaledX && scaledPosY == organism.selected.scaledY + 1) {
-                    organism.selected.bottomArrow.setColor(DEFAULT_COLOR);
-                } else {
+                if (organism.selected.bottomArrow != null)
                     organism.selected.bottomArrow.setColor(DEFAULT_COLOR_transparent);
-                }
-            }
-            // LEFT
-            if (organism.selected.leftArrow != null) {
-                if (scaledPosX == organism.selected.scaledX - 1 && scaledPosY == organism.selected.scaledY) {
-                    organism.selected.leftArrow.setColor(DEFAULT_COLOR);
-                } else {
+                if (organism.selected.leftArrow != null)
                     organism.selected.leftArrow.setColor(DEFAULT_COLOR_transparent);
-                }
-            }
-            // RIGHT
-            if (organism.selected.rightArrow != null) {
-                if (scaledPosX == organism.selected.scaledX + 1 && scaledPosY == organism.selected.scaledY) {
-                    organism.selected.rightArrow.setColor(DEFAULT_COLOR);
-                } else {
+                if (organism.selected.rightArrow != null)
                     organism.selected.rightArrow.setColor(DEFAULT_COLOR_transparent);
-                }
+                return;  
             }
+
+            checkCellArrowHover();
         }
     }
 }
@@ -195,7 +228,6 @@ function adjustZoom(zoomAmount, zoomFactor) {
 function lerp (start, end, amt) {
     return (1-amt)*start+amt*end
 }
-
 
 // Mouse event listeners
 canvas.addEventListener("mousedown", onPointerDown);

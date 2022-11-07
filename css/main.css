@@ -29,8 +29,8 @@ body {
 } 
 
 #canvas-container {
-    width: 60vw;
-    height: 80vh;
+    width: 100vw;
+    height: 100vh;
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -38,7 +38,7 @@ body {
     background-color: rgb(247, 247, 247);
     /* border: 1px solid #cccccc; */
     border-radius: 4px;
-    cursor: pointer;
+    /* cursor: pointer; */
     position: relative;
 }
 
@@ -46,13 +46,20 @@ body {
 .bar-container {
     position: absolute;
     top: 10px;
-    width: 100%;
+    width: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    margin-top: 15px;
+
+    padding: 10px 15px 10px 20px;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 #pause-play-btn {
-    width: 14px;
+    width: 15.5px;
     height: 16px;
     margin-right: 10px;
     position: relative; /* Used for play icon */
@@ -101,7 +108,7 @@ body {
 }
 
 #energy-bar-container {
-    width: 50%;
+    width: 100%;
     height: 8px;
     border-radius: 500px;
     background-color: #BFE0CD;
@@ -128,35 +135,27 @@ body {
     bottom: 20px;
     z-index: 999;
 
-    min-width: 20px;
-    width: fit-content;
-    height: 20px;
-
-    background-color: white;
-    border: 4px solid #838E94;
+    padding: 10px 15px;
     border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
 
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.cell-counter-container::after {
-    content: "";
-    position: absolute;
-    top: -5px; 
-    bottom: -5px;
-    left: -5px;
-    right: -5px;
-
-    border-radius: 11px;
-    border: 1px solid white;
+.cell-counter-icon {
+    width: 15px;
+    height: 15px;
+    border: 4px solid #071D29e5;
+    border-radius: 8px;
 }
-
 #cell-counter { 
     width: fit-content;
-    padding: 1.5px 4px;
+    margin-top: 1px;
+    margin-right: 5px;
 
     font-family: Inter-Bold;
-    font-size: 13px;
-    color: #838E94;
+    font-size: 18px;
+    color: #071d29e5;
 }

@@ -2,6 +2,7 @@ class Organism {
     constructor() {
         this.energy = 100.0; 
         this.cells = [];
+        this.buds = [];
         this.selected;
 
         this.cells.push = function () {
@@ -12,7 +13,7 @@ class Organism {
 
     killRandomBud() {
         // Get list of buds
-        let buds = this.getBuds();
+        let buds = this.buds;
         if (buds.length < 1) {
             return;
         }
@@ -24,6 +25,7 @@ class Organism {
         // Replace bud with new dead cell
         let newDeadCell = new Dead(randomBud.scaledX, randomBud.scaledY, CELL_SIZE, CELL_SIZE);
         organism.cells.splice(randCellIndex, 1, newDeadCell); 
+        organism.buds.splice(organism.buds.indexOf(randomBud), 1);
 
         // Make sure to remove the bud from each foods neighboring buds
         for (const food of foods) {
@@ -56,6 +58,7 @@ class Organism {
         return defaultCells;
     }
 
+    // DEPRICATED
     getBuds() {
         let budCells = [];
         for (const cell of this.cells) {
@@ -101,15 +104,11 @@ class Organism {
     }
 
     setSelectedCell(scaledX, scaledY) {
-        for (const cell of this.cells) {
-            if (cell.scaledX == scaledX && cell.scaledY == scaledY) {
-                if (cell instanceof Bud) {
-                    // set the cell to be selected
-                    this.selected = cell;
-                    return;
-                } else {
-                    return;
-                }
+        for (const bud of this.buds) {
+            if (bud.scaledX == scaledX && bud.scaledY == scaledY) {
+                // set the cell to be selected
+                this.selected = bud;
+                return;
             }
         }
 
@@ -123,7 +122,7 @@ class Organism {
     // Depricated
     getBudPositions() { 
         let positions = [];
-        for (const bud of organism.getBuds()) {
+        for (const bud of organism.buds) {
             positions.push({ x: bud.scaledX, y: bud.scaledY })
         }
         return positions;

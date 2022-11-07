@@ -17,13 +17,20 @@
     <script src="/js/functions.js"></script>
     <script src="/js/loop.js"></script>
     <script src="/js/draw.js"></script>
+    <script src="/js/events-helpers.js"></script>
     <script src="/js/events.js"></script>
     <script>
         // Functions intacting with HTML directly
         function pausePlay(element) {
-            element.children[0].style.display = paused ? "flex" : "none"
-            element.children[1].style.display = paused ? "none" : "block"
+            element.children[0].style.display = paused ? "flex" : "none";
+            element.children[1].style.display = paused ? "none" : "block";
             paused = !paused;
+        }
+        function pause() {
+            let btn = document.getElementById("pause-play-btn");
+            btn.children[0].style.display = "none";
+            btn.children[1].style.display = "block";
+            paused = true;
         }
     </script>
 </head>
@@ -50,16 +57,25 @@
         </div> 
         <div class="cell-counter-container">
             <div id="cell-counter">0</div>
+            <div class="cell-counter-icon"></div>
         </div>
     </div>
     <!-- START: Add testing buttons here -->
-    <button onclick="organism.killRandomBud()">Kill</button>
+    
     <!-- END -->
     <script src="/js/tests/tests.js"></script>
 </body>
 </html>
 
 <script>
+    // Pause if user leaves
+    document.onvisibilitychange = function() {
+        if (document.visibilityState === 'hidden') {
+            console.log("Gameplay Paused...");
+            pause();
+        }
+    };
+
     // Override keycodes
     document.body.addEventListener('keydown', (event) => {
         // keyCode 83 corresponds to the "s" key, meta corresponds to ⌘
@@ -72,8 +88,8 @@
             cameraZoom = 1;
         }
 
-        if (event.keyCode == 32) { // " "
-            let pausePlayBtn = document.getElementById("pause-play-btn")
+        if (event.keyCode == 32) { // "\space"
+            let pausePlayBtn = document.getElementById("pause-play-btn");
             pausePlay(pausePlayBtn);
         }
     });
