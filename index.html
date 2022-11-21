@@ -10,6 +10,7 @@
     <script src="/js/constants.js"></script>
     <script src="/js/helpers.js"></script>
     <script src="/js/entities/gameBoard.js"></script>
+    <script src="/js/entities/lakes.js"></script>
     <script src="/js/entities/cell.js"></script>
     <script src="/js/entities/cellArrow.js"></script>
     <script src="/js/entities/organism.js"></script>
@@ -32,11 +33,12 @@
             btn.children[1].style.display = "block";
             paused = true;
         }
+        let isMapPainter = false;
     </script>
 </head>
 <body onload="startGame()">
     <div id="canvas-container">
-        <div class="bar-container">
+        <div class="bar-container" id="bar-container">
             <div id="pause-play-btn" onclick="pausePlay(this)">
                 <div class="pause-icon">
                     <div class="left-bar"></div>
@@ -55,19 +57,33 @@
                 </svg>
             </div>
         </div> 
-        <div class="cell-counter-container">
+        <div class="cell-counter-container" id="cell-counter-container">
             <div id="cell-counter">0</div>
             <div class="cell-counter-icon"></div>
         </div>
     </div>
     <!-- START: Add testing buttons here -->
-    
+
     <!-- END -->
     <script src="/js/tests/tests.js"></script>
 </body>
 </html>
 
 <script>
+    function toggleMapPainter() {
+        if (isMapPainter) {
+            // Turn off Map Painter Mode
+            isMapPainter = false;
+            document.getElementById("bar-container").style.display = "flex"
+            document.getElementById("cell-counter-container").style.display = "flex"
+        } else {
+            pause();
+            isMapPainter = true;
+            document.getElementById("bar-container").style.display = "none"
+            document.getElementById("cell-counter-container").style.display = "none"
+        }
+    }
+
     // Pause if user leaves
     document.onvisibilitychange = function() {
         if (document.visibilityState === 'hidden') {
@@ -91,6 +107,11 @@
         if (event.keyCode == 32) { // "\space"
             let pausePlayBtn = document.getElementById("pause-play-btn");
             pausePlay(pausePlayBtn);
+        }
+
+        if (event.keyCode==77 && event.ctrlKey) {
+            event.preventDefault();
+            toggleMapPainter();
         }
     });
 </script>

@@ -119,6 +119,22 @@ function onPointerUp(e) {
         document.body.style.cursor = "default";
     }
 
+    if (isMapPainter) {
+        let click = getEventLocation(e);
+
+        let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
+        let canvasBounds = canvas.getBoundingClientRect();
+
+        let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
+        let canvasClickX = (click.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
+        let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
+        let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
+        let scaledClickX = Math.round( canvasClickX / 30 );
+        let scaledClickY = Math.round( canvasClickY / 30 );
+
+        lake.addLakeTile(scaledClickX, scaledClickY);
+    }
+
     isDragging = false;
     // Reset these to defaults: 
     initialPinchDistance = null;
@@ -155,6 +171,8 @@ function onPointerMove(e) {
         // cameraOffset.x = lerp(cameraOffset.x, getEventLocation(e).x/cameraZoom - dragStart.x, 0.5);
         // cameraOffset.y = lerp(cameraOffset.y, getEventLocation(e).y/cameraZoom - dragStart.y, 0.5);
     } else {
+        if (isMapPainter) return;
+
         let pos = getEventLocation(e);
         if (pos == undefined || pos == null) {
             console.log("Error with pos")

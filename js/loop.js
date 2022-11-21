@@ -10,6 +10,7 @@ let gameover = false;
 // array of cells
 var organism = new Organism();
 var foods = [];
+let lake = new Lake();
 // An array of coordinates where there is something 
 // Cell, Food, Wall*
 var obstructions = [];

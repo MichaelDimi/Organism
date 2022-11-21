@@ -18,6 +18,11 @@ function draw() {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height); // clear for drawing
 
+    if (isMapPainter) {
+        // Draw the temporary water
+        lake.drawLake();
+    }
+
     // Draw the background lines
     for (let i = 16; i < CANVAS_W; i+=CELL_SIZE+3) {
         ctx.lineWidth = 0.5;
@@ -44,18 +49,20 @@ function draw() {
     ctx.arc(canvas.width/2 + 0.8, canvas.height/2 + 0.8, 4, 0, 2*Math.PI);
     ctx.fill();
 
-    // Draw all cells in organism
-    for (let i = 0; i < organism.cells.length; i++) { 
-        let cell = organism.cells[i];
+    if (!isMapPainter) {
+        // Draw all cells in organism
+        for (let i = 0; i < organism.cells.length; i++) { 
+            let cell = organism.cells[i];
 
-        cell.drawCell();
-    }
+            cell.drawCell();
+        }
 
-    // Draw all foods
-    for (let i = 0; i < foods.length; i++) {
-        let food = foods[i];
-        food.drawFood();
-    }
+        // Draw all foods
+        for (let i = 0; i < foods.length; i++) {
+            let food = foods[i];
+            food.drawFood();
+        }
+    } 
 }
 
 
