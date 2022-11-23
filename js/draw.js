@@ -18,10 +18,8 @@ function draw() {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height); // clear for drawing
 
-    if (isMapPainter) {
-        // Draw the temporary water
-        lake.drawLake();
-    }
+    // Draw the temporary water
+    lake.drawLake();
 
     // Draw the background lines
     for (let i = 16; i < CANVAS_W; i+=CELL_SIZE+3) {

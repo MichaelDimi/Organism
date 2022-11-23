@@ -119,20 +119,22 @@ function onPointerUp(e) {
         document.body.style.cursor = "default";
     }
 
-    if (isMapPainter) {
+    // TODO: Here, add a tile
+    if (isMapPainter && !isDragging) {
         let click = getEventLocation(e);
 
         let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
         let canvasBounds = canvas.getBoundingClientRect();
 
         let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
-        let canvasClickX = (click.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
         let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
-        let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
+        let canvasClickX = (click.x - canvasWindow.x) / cameraZoom + canvasOffsetX + CELL_SIZE/2;
+        let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY + CELL_SIZE/2;
         let scaledClickX = Math.round( canvasClickX / 30 );
         let scaledClickY = Math.round( canvasClickY / 30 );
 
-        lake.addLakeTile(scaledClickX, scaledClickY);
+        let vert = lake.vertices[scaledClickX][scaledClickY];
+        vert.isLake = !vert.isLake;
     }
 
     isDragging = false;
