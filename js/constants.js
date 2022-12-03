@@ -24,10 +24,15 @@ let LIGHT_RED = "#FABFCD"
 let ORANGE = "#F15353";
 let LIGHT_ORANGE = "#FBD8BF"
 let CELL_SELECT_COLOR = "#0885CB";
-let FOOD_COLOR = {
+let FOOD_COLOR_ALT = { // BLUE
     normal: "rgba(42, 146, 242, 100)",
     light: "rgba(42, 146, 242, 0.4)",
     blink: "rgba(42, 146, 242, "
+}
+let FOOD_COLOR = { // VIOLET
+    normal: "rgba(221, 25, 225, 100)",
+    light: "rgba(221, 25, 225, 0.4)",
+    blink: "rgba(221, 25, 225, "
 }
 
 // Where a new cell will be placed relative to parent

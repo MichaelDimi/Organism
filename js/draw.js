@@ -6,6 +6,9 @@ let cameraZoom = 1
 
 let viewCenter;
 
+// Used for map painter
+let brushSize = 35; 
+
 function draw() {
     gameBoard.update();
 
@@ -18,13 +21,13 @@ function draw() {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height); // clear for drawing
 
-    // Draw the temporary water
+    // Draw the water
     lake.drawLake();
 
     // Draw the background lines
     for (let i = 16; i < CANVAS_W; i+=CELL_SIZE+3) {
         ctx.lineWidth = 0.5;
-        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
         ctx.beginPath();
         ctx.moveTo(i, 0);
         ctx.lineTo(i, CANVAS_H);
@@ -32,7 +35,7 @@ function draw() {
     }
     for (let i = 16; i < CANVAS_H; i+=CELL_SIZE+3) {
         ctx.lineWidth = 0.5;
-        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        ctx.strokeStyle = "rgba(0,0,0,0.1)";
         ctx.beginPath();
         ctx.moveTo(0, i);
         ctx.lineTo(CANVAS_W, i);
@@ -60,7 +63,18 @@ function draw() {
             let food = foods[i];
             food.drawFood();
         }
-    } 
+    } else {
+        // Draw a circle for the brush
+        ctx.strokeStyle = "lightgray";
+        ctx.lineWidth = 0.5;
+        ctx.roundedRect(canvasPosX - brushSize/2, canvasPosY - brushSize/2, brushSize, brushSize, 12).stroke();
+    }
+
+    // TODO: Remove
+    for (const o of obstructions) {
+        ctx.fillStyle = "black"
+        ctx.fillRect(o.x * 30 - 5, o.y * 30 - 5, 10, 10);
+    }
 }
 
 

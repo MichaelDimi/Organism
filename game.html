@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organism</title>
+    <link rel="stylesheet" href="/css/game.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="/js/constants.js"></script>
+    <script src="/js/helpers.js"></script>
+    <script src="/js/entities/gameBoard.js"></script>
+    <script src="/js/entities/lakes.js"></script>
+    <script src="/js/entities/cell.js"></script>
+    <script src="/js/entities/cellArrow.js"></script>
+    <script src="/js/entities/organism.js"></script>
+    <script src="/js/entities/food.js"></script>
+    <script src="/js/functions.js"></script>
+    <script src="/js/loop.js"></script>
+    <script src="/js/draw.js"></script>
+    <script src="/js/events-helpers.js"></script>
+    <script src="/js/events.js"></script>
+    <script>
+        // Functions intacting with HTML directly
+        function pausePlay(element) {
+            element.children[0].style.display = paused ? "flex" : "none";
+            element.children[1].style.display = paused ? "none" : "block";
+            paused = !paused;
+        }
+        function pause() {
+            let btn = document.getElementById("pause-play-btn");
+            btn.children[0].style.display = "none";
+            btn.children[1].style.display = "block";
+            paused = true;
+        }
+    </script>
+</head>
+<body onload="startGame()">
+    <h1 id="game-over">GAME OVER</h1>
+    <div id="canvas-container">
+        <div class="bar-container" id="bar-container">
+            <div id="pause-play-btn" onclick="pausePlay(this)">
+                <div class="pause-icon">
+                    <div class="left-bar"></div>
+                    <div class="right-bar"></div>
+                </div>
+                <svg style="display: none" class="play-icon" width="24" height="27" viewBox="0 0 24 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.9248 10.9737C23.9248 12.1284 23.9248 15.0152 21.9248 16.1699L4.6748 26.1291C2.6748 27.2838 0.174805 25.8405 0.174805 23.5311V3.61248C0.174805 1.30308 2.6748 -0.140291 4.6748 1.01441L21.9248 10.9737Z" fill="#D9D9D9"/>
+                </svg>
+            </div>
+            <div id="energy-bar-container">
+                <div id="energy-bar"></div>
+            </div>
+            <div id="speed-up-btn">
+                <svg class="speed-up-image" width="40" height="23" viewBox="0 0 40 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="speed-up-path" fill-rule="evenodd" clip-rule="evenodd" d="M20.0386 9.75252C19.833 9.52894 19.5868 9.33076 19.3 9.16806L5.40894 1.28627C3.40903 0.151523 0.928467 1.5961 0.928467 3.89551V19.6591C0.928467 21.9585 3.40903 23.4031 5.40894 22.2683L19.3 14.3865C19.5868 14.2238 19.833 14.0257 20.0386 13.8021V19.6591C20.0386 21.9585 22.5191 23.4031 24.519 22.2683L38.4102 14.3865C40.4362 13.237 40.4362 10.3176 38.4102 9.16806L24.519 1.28627C22.5191 0.151523 20.0386 1.5961 20.0386 3.89551V9.75252Z" fill="#071D29"/>
+                </svg>
+            </div>
+        </div> 
+        <div class="cell-counter-container" id="cell-counter-container">
+            <div id="cell-counter">0</div>
+            <div class="cell-counter-icon"></div>
+        </div>
+    </div>
+    <!-- START: Add testing buttons here -->
+
+    <!-- END -->
+    <script src="/js/tests/tests.js"></script>
+</body>
+</html>
+
+<script>
+    function toggleMapPainter() {
+        if (isMapPainter) {
+            // Turn off Map Painter Mode
+            isMapPainter = false;
+            document.getElementById("bar-container").style.display = "flex"
+            document.getElementById("cell-counter-container").style.display = "flex"
+        } else {
+            pause();
+            isMapPainter = true;
+            document.getElementById("bar-container").style.display = "none"
+            document.getElementById("cell-counter-container").style.display = "none"
+        }
+    }
+
+    // Pause if user leaves
+    document.onvisibilitychange = function() {
+        if (document.visibilityState === 'hidden') {
+            console.log("Gameplay Paused...");
+            pause();
+        }
+    };
+
+    // Override keycodes
+    document.body.addEventListener('keydown', (event) => {
+        // keyCode 83 corresponds to the "s" key, meta corresponds to ⌘
+        if((event.keyCode==83 && event.metaKey) || (event.keyCode==83 && event.ctrlKey)) {
+            event.preventDefault();
+            console.log('Default action prevented');
+        }
+
+        if (event.keyCode == 49) { // "1"
+            cameraZoom = 1;
+        }
+
+        if (event.keyCode == 32) { // "\space"
+            let pausePlayBtn = document.getElementById("pause-play-btn");
+            pausePlay(pausePlayBtn);
+        }
+
+        if (event.keyCode==77 && event.ctrlKey) {
+            event.preventDefault();
+            toggleMapPainter();
+        }
+    });
+</script>

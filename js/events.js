@@ -119,7 +119,6 @@ function onPointerUp(e) {
         document.body.style.cursor = "default";
     }
 
-    // TODO: Here, add a tile
     if (isMapPainter && !isDragging) {
         let click = getEventLocation(e);
 
@@ -133,8 +132,32 @@ function onPointerUp(e) {
         let scaledClickX = Math.round( canvasClickX / 30 );
         let scaledClickY = Math.round( canvasClickY / 30 );
 
+        if (scaledClickX == center.x && scaledClickY == center.y) return;
+        if (scaledClickX == center.x+1 && scaledClickY == center.y) return;
+        if (scaledClickX == center.x+1 && scaledClickY == center.y+1) return;
+        if (scaledClickX == center.x && scaledClickY == center.y+1) return;
+
         let vert = lake.vertices[scaledClickX][scaledClickY];
         vert.isLake = !vert.isLake;
+        if (vert.isLake) { // Don't add if it's there already
+            // Add to obstructions
+            obstructions.push({ x: scaledClickX, y: scaledClickY });
+            obstructions.push({ x: scaledClickX-1, y: scaledClickY-1 });
+            obstructions.push({ x: scaledClickX-1, y: scaledClickY });
+            obstructions.push({ x: scaledClickX, y: scaledClickY-1 });
+        } else {
+            // Remove from obstrctions
+            let removeIndex;
+            for (let i = 0; i < obstructions.length; i++) {
+                if (obstructions[i].x == scaledClickX && 
+                    obstructions[i].y == scaledClickY) {
+                        removeIndex = i;
+                        break;
+                }
+            }
+            obstructions.splice(removeIndex, 1);
+        }
+        console.log(obstructions)
     }
 
     isDragging = false;
@@ -173,23 +196,27 @@ function onPointerMove(e) {
         // cameraOffset.x = lerp(cameraOffset.x, getEventLocation(e).x/cameraZoom - dragStart.x, 0.5);
         // cameraOffset.y = lerp(cameraOffset.y, getEventLocation(e).y/cameraZoom - dragStart.y, 0.5);
     } else {
-        if (isMapPainter) return;
-
         let pos = getEventLocation(e);
+
         if (pos == undefined || pos == null) {
             console.log("Error with pos")
             return;
         }
 
+        // Convert position
         let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
         let canvasBounds = canvas.getBoundingClientRect();
-
-        // Do hover checks
+        
         let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
         canvasPosX = (pos.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
         let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
         canvasPosY = (pos.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
 
+        if (isMapPainter) {
+            return;
+        }
+
+        // Do hover checks
         let scaledPosX = Math.round(canvasPosX / 30.0);
         let scaledPosY = Math.round(canvasPosY / 30.0);
 

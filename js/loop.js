@@ -7,6 +7,9 @@ let clock = 0;
 let paused = false;
 let gameover = false;
 
+// TODO: separate the map painter into another html page
+let isMapPainter = false; 
+
 // array of cells
 var organism = new Organism();
 var foods = [];
@@ -30,11 +33,9 @@ function startGame() {
         spawnNewBud();
     }, 1000)
 
-    spawnRandomFood(center, 1);
-    // spawnRandomFood(center, 5);
-    // spawnRandomFood(center, 5);
-    // spawnRandomFood(center, 5);
-    // spawnRandomFood(center, 5);
+    for (let i = 0; i <= 10; i++) {
+        spawnRandomFood(center, 10);
+    }
 
     requestAnimationFrame( loop )
 }
@@ -46,23 +47,30 @@ function update(seconds) {
     let bar = document.getElementById("energy-bar");
     let barContainer = document.getElementById("energy-bar-container")
 
-    if (organism.energy < 0) {
+    if (organism.energy < 90) {
         bar.style.opacity = 0;
         gameover = true;
+        let gamoverPopup = document.getElementById("game-over")
+        gamoverPopup.style.display = "block";
+        gamoverPopup.style.opacity = "100%";
         return;
     } else if (organism.energy < 55) {
         bar.style.backgroundColor = RED;
         barContainer.style.backgroundColor = LIGHT_RED;
+    } else if (organism.energy >= 55) {
+        bar.style.backgroundColor = GREEN;
+        barContainer.style.backgroundColor = LIGHT_GREEN;
     }
 
     // Handle food rendering // TODO: Test this shit
     for (const food of foods) {
-        if (food.state == Food.STATE.grown) { // TODO: TEST
+        if (food.state == Food.STATE.grown) { 
             continue;
         }
         if (food.neighborBuds.length > 0) {
             
-            if (food.timeSinceGrown >= -125*(food.neighborBuds.length - 1) + 500) {
+            // TODO: Fix this, doesn't work above 6
+            if (food.timeSinceGrown >= -60*(food.neighborBuds.length - 1) + 500) {
                 food.color = FOOD_COLOR.normal;
                 food.state = Food.STATE.grown;
                 continue;
