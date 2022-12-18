@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organism - Map Painter</title>
+    <link rel="stylesheet" href="/css/game.css">
+    <link rel="stylesheet" href="/css/map_painter.css">
+    <script src="/js/constants.js"></script>
+    <script src="/js/helpers.js"></script>
+    <script src="/js/entities/gameBoard.js"></script>
+    <script src="/js/entities/lakes.js"></script>
+    <script src="/js/map-painter/painter-loop.js"></script>
+    <script src="/js/map-painter/painter-draw.js"></script>
+    <script src="/js/map-painter/painter-events.js"></script>
+</head>
+<body onload="startPaint()"></body>
+    <div id="canvas-container">
+        
+    </div>
+    <script>
+        // Override keycodes
+        document.body.addEventListener('keydown', (event) => {
+            // keyCode 83 corresponds to the "s" key, meta corresponds to ⌘
+            if((event.keyCode==83 && event.metaKey) || (event.keyCode==83 && event.ctrlKey)) {
+                event.preventDefault();
+                console.log('Default action prevented');
+            } else if (event.keyCode == 83) {
+                console.log(lake);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -119,47 +119,6 @@ function onPointerUp(e) {
         document.body.style.cursor = "default";
     }
 
-    if (isMapPainter && !isDragging) {
-        let click = getEventLocation(e);
-
-        let canvasWindow = document.getElementById("canvas-container").getBoundingClientRect()
-        let canvasBounds = canvas.getBoundingClientRect();
-
-        let canvasOffsetX = ((canvasBounds.width - canvasWindow.width / cameraZoom) / 2) - cameraOffset.x;
-        let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
-        let canvasClickX = (click.x - canvasWindow.x) / cameraZoom + canvasOffsetX + CELL_SIZE/2;
-        let canvasClickY = (click.y - canvasWindow.y) / cameraZoom + canvasOffsetY + CELL_SIZE/2;
-        let scaledClickX = Math.round( canvasClickX / 30 );
-        let scaledClickY = Math.round( canvasClickY / 30 );
-
-        if (scaledClickX == center.x && scaledClickY == center.y) return;
-        if (scaledClickX == center.x+1 && scaledClickY == center.y) return;
-        if (scaledClickX == center.x+1 && scaledClickY == center.y+1) return;
-        if (scaledClickX == center.x && scaledClickY == center.y+1) return;
-
-        let vert = lake.vertices[scaledClickX][scaledClickY];
-        vert.isLake = !vert.isLake;
-        if (vert.isLake) { // Don't add if it's there already
-            // Add to obstructions
-            obstructions.push({ x: scaledClickX, y: scaledClickY });
-            obstructions.push({ x: scaledClickX-1, y: scaledClickY-1 });
-            obstructions.push({ x: scaledClickX-1, y: scaledClickY });
-            obstructions.push({ x: scaledClickX, y: scaledClickY-1 });
-        } else {
-            // Remove from obstrctions
-            let removeIndex;
-            for (let i = 0; i < obstructions.length; i++) {
-                if (obstructions[i].x == scaledClickX && 
-                    obstructions[i].y == scaledClickY) {
-                        removeIndex = i;
-                        break;
-                }
-            }
-            obstructions.splice(removeIndex, 1);
-        }
-        console.log(obstructions)
-    }
-
     isDragging = false;
     // Reset these to defaults: 
     initialPinchDistance = null;
@@ -211,10 +170,6 @@ function onPointerMove(e) {
         canvasPosX = (pos.x - canvasWindow.x) / cameraZoom + canvasOffsetX;
         let canvasOffsetY = ((canvasBounds.height - canvasWindow.height / cameraZoom) / 2) - cameraOffset.y;
         canvasPosY = (pos.y - canvasWindow.y) / cameraZoom + canvasOffsetY;
-
-        if (isMapPainter) {
-            return;
-        }
 
         // Do hover checks
         let scaledPosX = Math.round(canvasPosX / 30.0);

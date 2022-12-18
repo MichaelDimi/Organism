@@ -70,20 +70,6 @@
 </html>
 
 <script>
-    function toggleMapPainter() {
-        if (isMapPainter) {
-            // Turn off Map Painter Mode
-            isMapPainter = false;
-            document.getElementById("bar-container").style.display = "flex"
-            document.getElementById("cell-counter-container").style.display = "flex"
-        } else {
-            pause();
-            isMapPainter = true;
-            document.getElementById("bar-container").style.display = "none"
-            document.getElementById("cell-counter-container").style.display = "none"
-        }
-    }
-
     // Pause if user leaves
     document.onvisibilitychange = function() {
         if (document.visibilityState === 'hidden') {
@@ -107,11 +93,6 @@
         if (event.keyCode == 32) { // "\space"
             let pausePlayBtn = document.getElementById("pause-play-btn");
             pausePlay(pausePlayBtn);
-        }
-
-        if (event.keyCode==77 && event.ctrlKey) {
-            event.preventDefault();
-            toggleMapPainter();
         }
     });
 </script>

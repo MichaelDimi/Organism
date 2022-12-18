@@ -7,9 +7,6 @@ let clock = 0;
 let paused = false;
 let gameover = false;
 
-// TODO: separate the map painter into another html page
-let isMapPainter = false; 
-
 // array of cells
 var organism = new Organism();
 var foods = [];

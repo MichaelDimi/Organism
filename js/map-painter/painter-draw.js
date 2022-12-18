@@ -6,7 +6,10 @@ let cameraZoom = 1
 
 let viewCenter;
 
-function draw() {
+// Used for map painter
+let brushSize = 35; 
+
+function painterDraw() {
     gameBoard.update();
 
     // Translate to the canvas centre before zooming 
@@ -18,8 +21,12 @@ function draw() {
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height); // clear for drawing
 
-    // Draw the water
     lake.drawLake();
+
+    ctx.fillStyle = DEFAULT_COLOR;
+    ctx.beginPath();
+    ctx.arc(canvas.width/2 + 0.8, canvas.height/2 + 0.8, 4, 0, 2*Math.PI);
+    ctx.fill();
 
     // Draw the background lines
     for (let i = 16; i < CANVAS_W; i+=CELL_SIZE+3) {
@@ -39,26 +46,8 @@ function draw() {
         ctx.stroke();
     }
 
-    // TODO: Compute rendering box
-
-    // MARK: Do all rendering here // only render things that are bounded by the rendering box
-    ctx.fillStyle = DEFAULT_COLOR;
-    ctx.beginPath();
-    ctx.arc(canvas.width/2 + 0.8, canvas.height/2 + 0.8, 4, 0, 2*Math.PI);
-    ctx.fill();
-
-    // Draw all cells in organism
-    for (let i = 0; i < organism.cells.length; i++) { 
-        let cell = organism.cells[i];
-
-        cell.drawCell();
-    }
-
-    // Draw all foods
-    for (let i = 0; i < foods.length; i++) {
-        let food = foods[i];
-        food.drawFood();
-    }
+    // Draw a circle for the brush
+    ctx.strokeStyle = "lightgray";
+    ctx.lineWidth = 0.5;
+    ctx.roundedRect(painterCanvasPosX - brushSize/2, painterCanvasPosY - brushSize/2, brushSize, brushSize, 12).stroke();
 }
-
-
